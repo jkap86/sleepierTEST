@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getLineupCheck } from './projections_stats';
 const Search = React.lazy(() => import('./search'));
 const LeagueRosters = React.lazy(() => import('./leagueRosters'));
@@ -14,6 +14,7 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
         by: 'default',
         descending: true
     })
+    const rowRef = useRef(null)
 
     const toggleRosters = (league_id) => {
         let rv = rostersVisible;
@@ -96,6 +97,14 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
         })
         setLeagues([...l])
     }
+
+    useEffect(() => {
+        window.scrollTo({
+            top: rowRef.current?.offsetTop,
+            left: 0,
+            behavior: 'auto'
+        })
+    }, [page])
 
     useEffect(() => {
         const l = prop_leagues.map((league, index) => {
@@ -206,170 +215,206 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
     )
 
     const display_standings = (
-        leagues_display
-            .slice(Math.max((page - 1) * 25, 0), ((page - 1) * 25) + 25)
-            .map((league, index) =>
-                <tbody
-                    key={`${league.league_id}_${index}`}
-                    className={rostersVisible.includes(league.league_id) ? 'active' : null}
-                >
-                    <tr>
-                        <td colSpan={13} >
-                            <table className={`table${1}`}>
-                                <tbody>
-                                    <tr
-                                        className={rostersVisible.includes(league.league_id) ? 'main_row active clickable' : 'main_row clickable'}
-                                        onClick={() => toggleRosters(league.league_id)}
-                                    >
-                                        <td colSpan={4} className={'left'}>
-                                            <p>
-                                                {
-                                                    avatar(league.avatar, league.name, 'league')
-                                                }
-                                                {league.name}
-                                            </p>
-                                        </td>
-                                        <td colSpan={3}>
-                                            {
-                                                `${league.userRoster.settings.wins}-${league.userRoster.settings.losses}${league.userRoster.settings.ties > 0 ? `-${league.userRoster.settings.ties}` : ''}`
-                                            }
-                                            &nbsp;&nbsp;
-                                            <em>
-                                                {
-                                                    (league.userRoster.settings.wins / Math.max((league.userRoster.settings.wins + league.userRoster.settings.losses + league.userRoster.settings.ties)), 1).toLocaleString("en-US", { maximumFractionDigits: 4, minimumFractionDigits: 4 })
-                                                }
-                                            </em>
-                                        </td>
-                                        <td colSpan={4}>
-                                            {
-                                                league.userRoster.settings.fpts?.toLocaleString("en-US")
-                                            } - {
-                                                league.userRoster.settings.fpts_against?.toLocaleString("en-US")
-                                            }
-                                        </td>
-                                        <td>
-                                            <p
-                                                className={
-                                                    (league.rank / league.total_rosters) <= .25 ? 'green' :
-                                                        (league.rank / league.total_rosters) >= .75 ? 'red' :
-                                                            null
-                                                }
+        <>
+            {
+                leagues_display
+                    .slice(Math.max((page - 1) * 25, 0), ((page - 1) * 25) + 25)
+                    .map((league, index) =>
+                        <tbody
+                            key={`${league.league_id}_${index}`}
+                            className={rostersVisible.includes(league.league_id) ? 'active' : null}
+                        >
+                            <tr>
+                                <td colSpan={13} >
+                                    <table className={`table${1}`}>
+                                        <tbody>
+                                            <tr
+                                                ref={index === 0 ? rowRef : null}
+                                                className={rostersVisible.includes(league.league_id) ? 'main_row active clickable' : 'main_row clickable'}
+                                                onClick={() => toggleRosters(league.league_id)}
                                             >
-                                                {
-                                                    league.rank
-                                                }
-                                            </p>
-                                        </td>
-                                        <td>
-                                            <p
-                                                className={
-                                                    (league.rank_points / league.total_rosters) <= .25 ? 'green' :
-                                                        (league.rank_points / league.total_rosters) >= .75 ? 'red' :
-                                                            null
-                                                }
-                                            >
-                                                {
-                                                    league.rank_points
-                                                }
-                                            </p>
-                                        </td>
-                                    </tr>
-                                    {
-                                        !rostersVisible.includes(league.league_id) ? null :
-                                            <tr>
-                                                <td colSpan={13}>
-                                                    <div className={`nav2`}></div>
-                                                    <React.Suspense fallback={
-                                                        <div className='logo_wrapper'>
-                                                            <div className='z one'>Z</div>
-                                                            <div className='z two'>Z</div>
-                                                            <div className='z three'>Z</div>
-                                                        </div>}>
-                                                        <LeagueRosters
-                                                            type={2}
-                                                            rosters={league.rosters}
-                                                            users={league.users}
-                                                            avatar={avatar}
-                                                            roster_positions={league.roster_positions}
-                                                            user_id={user_id}
-                                                            allplayers={allplayers}
-                                                        />
-                                                    </React.Suspense>
+                                                <td colSpan={4} className={'left'}>
+                                                    <p>
+                                                        {
+                                                            avatar(league.avatar, league.name, 'league')
+                                                        }
+                                                        {league.name}
+                                                    </p>
+                                                </td>
+                                                <td colSpan={3}>
+                                                    {
+                                                        `${league.userRoster.settings.wins}-${league.userRoster.settings.losses}${league.userRoster.settings.ties > 0 ? `-${league.userRoster.settings.ties}` : ''}`
+                                                    }
+                                                    &nbsp;&nbsp;
+                                                    <em>
+                                                        {
+                                                            (league.userRoster.settings.wins / Math.max((league.userRoster.settings.wins + league.userRoster.settings.losses + league.userRoster.settings.ties)), 1).toLocaleString("en-US", { maximumFractionDigits: 4, minimumFractionDigits: 4 })
+                                                        }
+                                                    </em>
+                                                </td>
+                                                <td colSpan={4}>
+                                                    {
+                                                        league.userRoster.settings.fpts?.toLocaleString("en-US")
+                                                    } - {
+                                                        league.userRoster.settings.fpts_against?.toLocaleString("en-US")
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <p
+                                                        className={
+                                                            (league.rank / league.total_rosters) <= .25 ? 'green' :
+                                                                (league.rank / league.total_rosters) >= .75 ? 'red' :
+                                                                    null
+                                                        }
+                                                    >
+                                                        {
+                                                            league.rank
+                                                        }
+                                                    </p>
+                                                </td>
+                                                <td>
+                                                    <p
+                                                        className={
+                                                            (league.rank_points / league.total_rosters) <= .25 ? 'green' :
+                                                                (league.rank_points / league.total_rosters) >= .75 ? 'red' :
+                                                                    null
+                                                        }
+                                                    >
+                                                        {
+                                                            league.rank_points
+                                                        }
+                                                    </p>
                                                 </td>
                                             </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                </tbody>
-            )
+                                            {
+                                                !rostersVisible.includes(league.league_id) ? null :
+                                                    <tr>
+                                                        <td colSpan={13}>
+                                                            <div className={`nav2`}></div>
+                                                            <React.Suspense fallback={
+                                                                <div className='logo_wrapper'>
+                                                                    <div className='z one'>Z</div>
+                                                                    <div className='z two'>Z</div>
+                                                                    <div className='z three'>Z</div>
+                                                                </div>}>
+                                                                <LeagueRosters
+                                                                    type={2}
+                                                                    rosters={league.rosters}
+                                                                    users={league.users}
+                                                                    avatar={avatar}
+                                                                    roster_positions={league.roster_positions}
+                                                                    user_id={user_id}
+                                                                    allplayers={allplayers}
+                                                                />
+                                                            </React.Suspense>
+                                                        </td>
+                                                    </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    )
+            }
+            {
+                (((page - 1) * 25) + 25) < leagues_display.length ?
+                    <tbody>
+                        <tr
+                            className={'clickable'}
+                            onClick={() => setPage(prevState => prevState + 1)}
+                        >
+                            <td colSpan={13}>NEXT PAGE</td>
+                        </tr>
+                    </tbody>
+                    :
+                    null
+            }
+        </>
     )
     const display_lineup_check = (
-        leagues_display
-            .slice(Math.max((page - 1) * 25, 0), ((page - 1) * 25) + 25)
-            .map((league, index) =>
-                <tbody
-                    key={`${league.league_id}_${index}`}
-                    className={rostersVisible.includes(league.league_id) ? 'active' : null}
-                >
-                    <tr>
-                        <td colSpan={8} >
-                            <table className={`table${1}`}>
-                                <tbody>
-                                    <tr
-                                        className={rostersVisible.includes(league.league_id) ? 'main_row active clickable' : 'main_row clickable'}
-                                        onClick={() => toggleRosters(league.league_id)}
-                                    >
-                                        <td colSpan={4} className={'left'}>
-                                            <p>
-                                                {
-                                                    avatar(league.avatar, league.name, 'league')
-                                                }
-                                                {league.name}
-                                            </p>
-                                        </td>
-                                        <td colSpan={2}>
-                                            {
-                                                league.userRoster.starters.filter(s => s === '0').length
-                                            }
-                                        </td>
-                                        <td colSpan={2}>
-                                            {
-                                                getLineupCheck(league.roster_positions, league.userRoster, weekly_rankings, allplayers)
-                                                    .filter(slot => slot.subs.length > 0).length
-                                            }
-                                        </td>
-                                    </tr>
-                                    {
-                                        !rostersVisible.includes(league.league_id) ? null :
-                                            <tr>
-                                                <td colSpan={8}>
-                                                    <div className={`nav2`}></div>
-                                                    <React.Suspense fallback={
-                                                        <div className='logo_wrapper'>
-                                                            <div className='z one'>Z</div>
-                                                            <div className='z two'>Z</div>
-                                                            <div className='z three'>Z</div>
-                                                        </div>}>
-                                                        <LineupBreakdown
-                                                            type={2}
-                                                            roster={league.userRoster}
-                                                            lineup_check={getLineupCheck(league.roster_positions, league.userRoster, weekly_rankings, allplayers)}
-                                                            avatar={avatar}
-                                                            weekly_rankings={weekly_rankings}
-                                                            allplayers={allplayers}
-                                                        />
-                                                    </React.Suspense>
+        <>
+            {
+                leagues_display
+                    .slice(Math.max((page - 1) * 25, 0), ((page - 1) * 25) + 25)
+                    .map((league, index) =>
+                        <tbody
+                            key={`${league.league_id}_${index}`}
+                            className={rostersVisible.includes(league.league_id) ? 'active' : null}
+                        >
+                            <tr>
+                                <td colSpan={8} >
+                                    <table className={`table${1}`}>
+                                        <tbody>
+                                            <tr
+                                                ref={index === 0 ? rowRef : null}
+                                                className={rostersVisible.includes(league.league_id) ? 'main_row active clickable' : 'main_row clickable'}
+                                                onClick={() => toggleRosters(league.league_id)}
+                                            >
+                                                <td colSpan={4} className={'left'}>
+                                                    <p>
+                                                        {
+                                                            avatar(league.avatar, league.name, 'league')
+                                                        }
+                                                        {league.name}
+                                                    </p>
+                                                </td>
+                                                <td colSpan={2}>
+                                                    {
+                                                        league.userRoster.starters.filter(s => s === '0').length
+                                                    }
+                                                </td>
+                                                <td colSpan={2}>
+                                                    {
+                                                        getLineupCheck(league.roster_positions, league.userRoster, weekly_rankings, allplayers)
+                                                            .filter(slot => slot.subs.length > 0).length
+                                                    }
                                                 </td>
                                             </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                </tbody>
-            )
+                                            {
+                                                !rostersVisible.includes(league.league_id) ? null :
+                                                    <tr>
+                                                        <td colSpan={8}>
+                                                            <div className={`nav2`}></div>
+                                                            <React.Suspense fallback={
+                                                                <div className='logo_wrapper'>
+                                                                    <div className='z one'>Z</div>
+                                                                    <div className='z two'>Z</div>
+                                                                    <div className='z three'>Z</div>
+                                                                </div>}>
+                                                                <LineupBreakdown
+                                                                    type={2}
+                                                                    roster={league.userRoster}
+                                                                    lineup_check={getLineupCheck(league.roster_positions, league.userRoster, weekly_rankings, allplayers)}
+                                                                    avatar={avatar}
+                                                                    weekly_rankings={weekly_rankings}
+                                                                    allplayers={allplayers}
+                                                                />
+                                                            </React.Suspense>
+                                                        </td>
+                                                    </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    )
+            }
+            {
+                (((page - 1) * 25) + 25) < leagues_display.length ?
+                    <tbody>
+                        <tr
+                            className={'clickable'}
+                            onClick={() => setPage(prevState => prevState + 1)}
+                        >
+                            <td colSpan={8}>NEXT PAGE</td>
+                        </tr>
+                    </tbody>
+                    :
+                    null
+            }
+        </>
     )
 
     const header = lineupCheck ? header_lineup_check : header_standings
