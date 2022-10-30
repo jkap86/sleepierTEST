@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 const Search = React.lazy(() => import('./search'));
 const PlayerLeagues = React.lazy(() => import('./playerLeagues'));
-
+const PlayerStartBench = React.lazy(() => import('./playerStartBench'))
 
 const PlayerShares = (props) => {
     const [playershares, setPlayershares] = useState([])
@@ -45,10 +45,11 @@ const PlayerShares = (props) => {
     const header = displayRankings ? (
         <>
             <tr className="main_header double">
+                <th colSpan={3} rowSpan={2}>Player</th>
                 <th colSpan={4}>Rank</th>
-                <th colSpan={5} rowSpan={2}>Player</th>
                 <th colSpan={2} rowSpan={2}>Opp</th>
-                <th colSpan={1} rowSpan={2}>Proj</th>
+                <th colSpan={1} rowSpan={2}>Start</th>
+                <th colSpan={1} rowSpan={2}>Bench</th>
             </tr>
             <tr className="main_header double">
                 <th colSpan={1}>OVR</th>
@@ -88,17 +89,17 @@ const PlayerShares = (props) => {
             .slice((page - 1) * 25, ((page - 1) * 25) + 25).map((player, index) =>
                 <tbody
                     key={`${player.id}_${index}`}
+                    className={leaguesVisible.includes(player.id) ? 'active' : null}
                 >
                     <tr>
-                        <td colSpan={12}>
+                        <td colSpan={11}>
                             <table className={`table${1}`}>
                                 <tbody>
-                                    <tr>
-                                        <td colSpan={1}>{player.rank_ecr}</td>
-                                        <td colSpan={1}>{player.rank_min}</td>
-                                        <td colSpan={1}>{player.rank_max}</td>
-                                        <td colSpan={1}>{player.pos_rank}</td>
-                                        <td colSpan={5} className={'left'}>
+                                    <tr
+                                        className={leaguesVisible.includes(player.id) ? 'main_row active clickable' : 'main_row clickable'}
+                                        onClick={() => toggleLeagues(player.id)}
+                                    >
+                                        <td colSpan={3} className={'left'}>
                                             <p>
                                                 {
                                                     props.avatar(player.id, props.allplayers[player.id]?.full_name, 'player')
@@ -108,9 +109,43 @@ const PlayerShares = (props) => {
                                                 {props.allplayers[player.id]?.team}
                                             </p>
                                         </td>
+                                        <td colSpan={1}>{player.rank_ecr}</td>
+                                        <td colSpan={1}>{player.rank_min}</td>
+                                        <td colSpan={1}>{player.rank_max}</td>
+                                        <td colSpan={1}>{player.pos_rank}</td>
                                         <td colSpan={2}>{player.player_opponent}</td>
-                                        <td colSpan={1}>{player.proj_fpts}</td>
+                                        <td colSpan={1}>
+                                            {
+                                                playershares.find(ps => ps.id === player.id)?.leagues_owned.filter(lo => lo.status === 'Starter').length
+                                            }
+                                        </td>
+                                        <td colSpan={1}>
+                                            {
+                                                playershares.find(ps => ps.id === player.id)?.leagues_owned.filter(lo => lo.status !== 'Starter').length
+                                            }
+                                        </td>
                                     </tr>
+                                    {
+                                        !leaguesVisible.includes(player.id) ? null :
+                                            <tr>
+                                                <td colSpan={11}>
+                                                    <React.Suspense fallback={
+                                                        <div className='logo_wrapper'>
+                                                            <div className='z one'>Z</div>
+                                                            <div className='z two'>Z</div>
+                                                            <div className='z three'>Z</div>
+                                                        </div>}>
+                                                        <PlayerStartBench
+                                                            type={2}
+                                                            leagues_starting={playershares.find(ps => ps.id === player.id)?.leagues_owned.filter(lo => lo.status === 'Starter')}
+                                                            leagues_benched={playershares.find(ps => ps.id === player.id)?.leagues_owned.filter(lo => lo.status !== 'Starter')}
+                                                            avatar={props.avatar}
+                                                            user_id={props.user_id}
+                                                        />
+                                                    </React.Suspense>
+                                                </td>
+                                            </tr>
+                                    }
                                 </tbody>
                             </table>
                         </td>
