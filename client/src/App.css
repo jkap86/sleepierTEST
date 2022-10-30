@@ -274,7 +274,7 @@ div#view div.summary>table.summary td {
 /* Tab Header */
 div.tab {
   background-color: inherit;
-  padding-bottom: 10rem;
+  padding-bottom: 25vh;
 }
 
 div.tab>input {
