@@ -152,6 +152,7 @@ const View = () => {
             }).flat(2)
             const playersCount = getPlayerCount(players_all.filter(x => x !== undefined), user_id, leagues)
             setStatePlayerShares(playersCount)
+            setIsLoading(false);
         }
 
         const getLeaguemates = (leagues, user_id) => {
@@ -228,7 +229,7 @@ const View = () => {
             }
         }
         fetchUser()
-        setIsLoading(false);
+
     }, [params.username])
 
     useEffect(() => {
