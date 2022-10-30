@@ -35,35 +35,26 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
             case 'Record':
                 if (sb.descending) {
                     l = l.sort((a, b) =>
-                        (b.wins / (b.wins + b.losses + b.ties)) -
-                        (a.wins / (a.wins + a.losses + a.ties))
+                        (b.userRoster.settings.wins / (b.userRoster.settings.wins + b.userRoster.settings.losses + b.userRoster.settings.ties)) -
+                        (a.userRoster.settings.wins / (a.userRoster.settings.wins + a.userRoster.settings.losses + a.userRoster.settings.ties))
                     )
                 } else {
                     l = l.sort((a, b) =>
-                        (a.wins / (a.wins + a.losses + a.ties)) -
-                        (b.wins / (b.wins + b.losses + b.ties))
+                        (a.userRoster.settings.wins / (a.userRoster.settings.wins + a.userRoster.settings.losses + a.userRoster.settings.ties)) -
+                        (b.userRoster.settings.wins / (b.userRoster.settings.wins + b.userRoster.settings.losses + b.userRoster.settings.ties))
                     )
                 }
                 break;
             case 'PF':
                 if (sb.descending) {
                     l = l.sort((a, b) =>
-                        b.fpts - a.fpts || b.fpts_decimal - a.fpts_decimal
+                        b.userRoster.settings.fpts - a.userRoster.settings.fpts ||
+                        b.userRoster.settings.fpts_decimal - a.userRoster.settings.fpts_decimal
                     )
                 } else {
                     l = l.sort((a, b) =>
-                        a.fpts - b.fpts || a.fpts_decimal - b.fpts_decimal
-                    )
-                }
-                break;
-            case 'PA':
-                if (sb.descending) {
-                    l = l.sort((a, b) =>
-                        b.fpts_against - a.fpts_against || b.fpts_against_decimal - a.fpts_against_decimal
-                    )
-                } else {
-                    l = l.sort((a, b) =>
-                        a.fpts_against - b.fpts_against || a.fpts_against_decimal - b.fpts_against_decimal
+                        a.userRoster.settings.fpts - b.userRoster.settings.fpts ||
+                        a.userRoster.settings.fpts_decimal - b.userRoster.settings.fpts_decimal
                     )
                 }
                 break;
@@ -86,6 +77,20 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
                     l = l.sort((a, b) => a.index - b.index)
                 } else {
                     l = l.sort((a, b) => a.name > b.name ? 1 : -1)
+                }
+                break;
+            case 'SO Slots':
+                if (sb.descending) {
+                    l = l.sort((a, b) => a.so_slots - b.so_slots)
+                } else {
+                    l = l.sort((a, b) => b.so_slots - a.so_slots)
+                }
+                break;
+            case 'Empty Slots':
+                if (sb.descending) {
+                    l = l.sort((a, b) => a.empty_slots - b.empty_slots)
+                } else {
+                    l = l.sort((a, b) => b.empty_slots - a.empty_slots)
                 }
                 break;
             default:
@@ -116,32 +121,6 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
             const rank = standings.findIndex(obj => {
                 return obj.owner_id === user_id || obj.co_owners?.includes(user_id)
             })
-            league['percent_of'] = {
-                first: (league.fpts /
-                    parseFloat(
-                        `${standings[0]?.settings?.fpts}.${standings[0]?.settings?.fpts_decimal}`
-                    )) * 100,
-                second: (league.fpts /
-                    parseFloat(
-                        `${standings[1]?.settings?.fpts}.${standings[1]?.settings?.fpts_decimal}`
-                    )) * 100,
-                third: (league.fpts /
-                    parseFloat(
-                        `${standings[2]?.settings?.fpts}.${standings[2]?.settings?.fpts_decimal}`
-                    )) * 100,
-                fourth: (league.fpts /
-                    parseFloat(
-                        `${standings[3]?.settings?.fpts}.${standings[3]?.settings?.fpts_decimal}`
-                    )) * 100,
-                fifth: (league.fpts /
-                    parseFloat(
-                        `${standings[4]?.settings?.fpts}.${standings[4]?.settings?.fpts_decimal}`
-                    )) * 100,
-                sixth: (league.fpts /
-                    parseFloat(
-                        `${standings[5]?.settings?.fpts}.${standings[5]?.settings?.fpts_decimal}`
-                    )) * 100
-            };
             league['rank'] = rank + 1
             const standings_points = league.rosters.sort((a, b) =>
                 b.settings.fpts - a.settings.fpts || b.settings.wins - a.settings.wins
@@ -149,8 +128,12 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
             const rank_points = standings_points.findIndex(obj => {
                 return obj.owner_id === user_id || obj.co_owners?.includes(user_id)
             })
-            league['standings_points'] = standings_points;
             league['rank_points'] = rank_points + 1
+
+            league['empty_slots'] = league.userRoster.starters.filter(s => s === '0').length
+            league['so_slots'] = getLineupCheck(league.roster_positions, league.userRoster, weekly_rankings, allplayers)
+                .filter(slot => slot.subs.length > 0).length
+
             return league
         })
         setLeagues([...l])
@@ -204,10 +187,16 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
                 >
                     League
                 </th>
-                <th colSpan={2}>
+                <th colSpan={2}
+                    className={'clickable'}
+                    onClick={() => sortLeagues('Empty Slots')}
+                >
                     Empty Starter Slots
                 </th>
-                <th colSpan={2}>
+                <th colSpan={2}
+                    className={'clickable'}
+                    onClick={() => sortLeagues('SO Slots')}
+                >
                     Suboptimal Slots
                 </th>
             </tr>
@@ -361,13 +350,12 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
                                                 </td>
                                                 <td colSpan={2}>
                                                     {
-                                                        league.userRoster.starters.filter(s => s === '0').length
+                                                        league.empty_slots
                                                     }
                                                 </td>
                                                 <td colSpan={2}>
                                                     {
-                                                        getLineupCheck(league.roster_positions, league.userRoster, weekly_rankings, allplayers)
-                                                            .filter(slot => slot.subs.length > 0).length
+                                                        league.so_slots
                                                     }
                                                 </td>
                                             </tr>
