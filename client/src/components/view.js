@@ -7,6 +7,7 @@ import { match_weekly_rankings } from './projections_stats';
 import sleeperLogo from '../images/sleeper_icon.png';
 const Leagues = React.lazy(() => import('./leagues'));
 const PlayerShares = React.lazy(() => import('./playershares'));
+const Leaguemates = React.lazy(() => import('./leaguemates'));
 
 const View = () => {
     const params = useParams();
@@ -479,6 +480,23 @@ const View = () => {
                         weekly_rankings={stateWeeklyRankings}
                         allplayers={stateAllPlayers}
                         user_id={state_user.user_id}
+                        avatar={avatar}
+                    />
+                </React.Suspense>
+            break;
+        case 'Leaguemates':
+            display = isLoading ? loadingMessage :
+                <React.Suspense fallback={
+                    <div className='logo_wrapper'>
+                        <div className='z one'>Z</div>
+                        <div className='z two'>Z</div>
+                        <div className='z three'>Z</div>
+                    </div>
+                }>
+                    <Leaguemates
+                        leaguemates={stateLeaguematesFiltered}
+                        user_id={state_user.user_id}
+                        username={state_user.display_name}
                         avatar={avatar}
                     />
                 </React.Suspense>
