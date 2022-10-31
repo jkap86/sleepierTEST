@@ -7,7 +7,7 @@ const PlayerShares = (props) => {
     const [playershares, setPlayershares] = useState([])
     const [stateWeeklyRankings, SetStateWeeklyRankings] = useState([]);
     const [searched, setSearched] = useState('')
-    const [leaguesVisible, setLeaguesVisible] = useState([])
+    const [leaguesVisible, setLeaguesVisible] = useState('')
     const [page, setPage] = useState(1)
     const [filterTeam, setFilterTeam] = useState('All')
     const [displayRankings, setDispayRankings] = useState(false)
@@ -100,7 +100,7 @@ const PlayerShares = (props) => {
                     .slice((page - 1) * 25, ((page - 1) * 25) + 25).map((player, index) =>
                         <tbody
                             key={`${player.id}_${index}`}
-                            className={leaguesVisible.includes(player.id) ? 'active' : null}
+                            className={leaguesVisible === player.id ? 'active' : null}
                         >
                             <tr>
                                 <td colSpan={11}>
@@ -108,8 +108,8 @@ const PlayerShares = (props) => {
                                         <tbody>
                                             <tr
                                                 ref={index === 0 ? rowRef : null}
-                                                className={leaguesVisible.includes(player.id) ? 'main_row active clickable' : 'main_row clickable'}
-                                                onClick={() => toggleLeagues(player.id)}
+                                                className={leaguesVisible === player.id ? 'main_row active clickable' : 'main_row clickable'}
+                                                onClick={() => setLeaguesVisible(prevState => prevState === player.id ? '' : player.id)}
                                             >
                                                 <td colSpan={3} className={'left'}>
                                                     <p>
@@ -138,7 +138,7 @@ const PlayerShares = (props) => {
                                                 </td>
                                             </tr>
                                             {
-                                                !leaguesVisible.includes(player.id) ? null :
+                                                leaguesVisible !== player.id ? null :
                                                     <tr>
                                                         <td colSpan={11}>
                                                             <React.Suspense fallback={
@@ -190,7 +190,7 @@ const PlayerShares = (props) => {
                     .slice((page - 1) * 25, ((page - 1) * 25) + 25).map((player, index) =>
                         <tbody
                             key={`${player.id}_${index}`}
-                            className={leaguesVisible.includes(player.id) ? 'active' : null}
+                            className={leaguesVisible === player.id ? 'active' : null}
                         >
                             <tr>
                                 <td colSpan={16}>
@@ -198,8 +198,8 @@ const PlayerShares = (props) => {
                                         <tbody>
                                             <tr
                                                 ref={index === 0 ? rowRef : null}
-                                                className={leaguesVisible.includes(player.id) ? 'main_row active clickable' : 'main_row clickable'}
-                                                onClick={() => toggleLeagues(player.id)}
+                                                className={leaguesVisible === player.id ? 'main_row active clickable' : 'main_row clickable'}
+                                                onClick={() => setLeaguesVisible(prevState => prevState === player.id ? '' : player.id)}
                                             >
                                                 <td colSpan={5} className={'left'}>
                                                     <p>
@@ -244,7 +244,7 @@ const PlayerShares = (props) => {
                                                 </td>
                                             </tr>
                                             {
-                                                !leaguesVisible.includes(player.id) ? null :
+                                                leaguesVisible !== player.id ? null :
                                                     <tr>
                                                         <td colSpan={16}>
                                                             <React.Suspense fallback={

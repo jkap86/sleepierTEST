@@ -6,7 +6,7 @@ const Leaguemates = (props) => {
     const [leaguemates, setLeaguemates] = useState([])
     const [searched, setSearched] = useState('')
     const [page, setPage] = useState(1)
-    const [leaguesVisible, setLeaguesVisible] = useState([])
+    const [leaguesVisible, setLeaguesVisible] = useState('')
     const rowRef = useRef(null)
 
     const toggleLeagues = (leaguemate_id) => {
@@ -69,8 +69,8 @@ const Leaguemates = (props) => {
                                     <tbody>
                                         <tr
                                             ref={index === 0 ? rowRef : null}
-                                            className={leaguesVisible.includes(leaguemate.user_id) ? 'main_row active clickable' : 'main_row clickable'}
-                                            onClick={() => toggleLeagues(leaguemate.user_id)}
+                                            className={leaguesVisible === leaguemate.user_id ? 'main_row active clickable' : 'main_row clickable'}
+                                            onClick={() => setLeaguesVisible(prevState => prevState === leaguemate.user_id ? '' : leaguemate.user_id)}
                                         >
                                             <td colSpan={4} className={'left'}>
                                                 <p>
@@ -121,7 +121,7 @@ const Leaguemates = (props) => {
                                             </td>
                                         </tr>
                                         {
-                                            !leaguesVisible.includes(leaguemate.user_id) ? null :
+                                            leaguesVisible !== leaguemate.user_id ? null :
                                                 <tr>
                                                     <td colSpan={18}>
                                                         <React.Suspense fallback={

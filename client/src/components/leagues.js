@@ -8,23 +8,13 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
     const [leagues, setLeagues] = useState([])
     const [searched, setSearched] = useState('')
     const [page, setPage] = useState(1)
-    const [rostersVisible, setRostersVisible] = useState([])
+    const [rostersVisible, setRostersVisible] = useState('')
     const [lineupCheck, setLineupCheck] = useState(false);
     const [sortedBy, setSortedBy] = useState({
         by: 'default',
         descending: true
     })
     const rowRef = useRef(null)
-
-    const toggleRosters = (league_id) => {
-        let rv = rostersVisible;
-        if (rv.includes(league_id)) {
-            rv = rv.filter(x => x !== league_id)
-        } else {
-            rv.push(league_id)
-        }
-        setRostersVisible([...rv])
-    }
 
     const sortLeagues = (sort_by) => {
         let l = leagues
@@ -211,7 +201,7 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
                     .map((league, index) =>
                         <tbody
                             key={`${league.league_id}_${index}`}
-                            className={rostersVisible.includes(league.league_id) ? 'active' : null}
+                            className={rostersVisible === league.league_id ? 'active' : null}
                         >
                             <tr>
                                 <td colSpan={13} >
@@ -219,8 +209,8 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
                                         <tbody>
                                             <tr
                                                 ref={index === 0 ? rowRef : null}
-                                                className={rostersVisible.includes(league.league_id) ? 'main_row active clickable' : 'main_row clickable'}
-                                                onClick={() => toggleRosters(league.league_id)}
+                                                className={rostersVisible === league.league_id ? 'main_row active clickable' : 'main_row clickable'}
+                                                onClick={() => setRostersVisible(prevState => prevState === league.league_id ? '' : league.league_id)}
                                             >
                                                 <td colSpan={4} className={'left'}>
                                                     <p>
@@ -276,7 +266,7 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
                                                 </td>
                                             </tr>
                                             {
-                                                !rostersVisible.includes(league.league_id) ? null :
+                                                rostersVisible !== league.league_id ? null :
                                                     <tr>
                                                         <td colSpan={13}>
                                                             <div className={`nav2`}></div>
@@ -329,7 +319,7 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
                     .map((league, index) =>
                         <tbody
                             key={`${league.league_id}_${index}`}
-                            className={rostersVisible.includes(league.league_id) ? 'active' : null}
+                            className={rostersVisible === league.league_id ? 'active' : null}
                         >
                             <tr>
                                 <td colSpan={8} >
@@ -337,8 +327,8 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
                                         <tbody>
                                             <tr
                                                 ref={index === 0 ? rowRef : null}
-                                                className={rostersVisible.includes(league.league_id) ? 'main_row active clickable' : 'main_row clickable'}
-                                                onClick={() => toggleRosters(league.league_id)}
+                                                className={rostersVisible === league.league_id ? 'main_row active clickable' : 'main_row clickable'}
+                                                onClick={() => setRostersVisible(prevState => prevState === league.league_id ? '' : league.league_id)}
                                             >
                                                 <td colSpan={4} className={'left'}>
                                                     <p>
@@ -360,7 +350,7 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
                                                 </td>
                                             </tr>
                                             {
-                                                !rostersVisible.includes(league.league_id) ? null :
+                                                rostersVisible !== league.league_id ? null :
                                                     <tr>
                                                         <td colSpan={8}>
                                                             <div className={`nav2`}></div>
