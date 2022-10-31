@@ -124,6 +124,7 @@ const View = () => {
                             league_avatar: league.avatar,
                             total_rosters: league.total_rosters,
                             rosters: league.rosters,
+                            userRoster: league.userRoster,
                             users: league.users,
                             settings: league.settings,
                             scoring_settings: league.scoring_settings,

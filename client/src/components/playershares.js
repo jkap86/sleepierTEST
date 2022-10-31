@@ -149,10 +149,14 @@ const PlayerShares = (props) => {
                                                                 </div>}>
                                                                 <PlayerStartBench
                                                                     type={2}
+                                                                    player_id={player.id}
                                                                     leagues_starting={playershares.find(ps => ps.id === player.id)?.leagues_owned.filter(lo => lo.status === 'Starter')}
                                                                     leagues_benched={playershares.find(ps => ps.id === player.id)?.leagues_owned.filter(lo => lo.status !== 'Starter')}
                                                                     avatar={props.avatar}
                                                                     user_id={props.user_id}
+                                                                    weekly_rankings={stateWeeklyRankings}
+                                                                    player_rank={player.rank_ecr}
+                                                                    allplayers={props.allplayers}
                                                                 />
                                                             </React.Suspense>
                                                         </td>
