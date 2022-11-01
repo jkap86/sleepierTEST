@@ -10,15 +10,15 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
     const [page, setPage] = useState(1)
     const [rostersVisible, setRostersVisible] = useState('')
     const [lineupCheck, setLineupCheck] = useState(false);
-    const [sortedBy, setSortedBy] = useState({
+    const rowRef = useRef(null)
+    const sortedByRef = useRef({
         by: 'default',
         descending: true
     })
-    const rowRef = useRef(null)
 
-    const sortLeagues = (sort_by) => {
-        let l = leagues
-        let sb = sortedBy
+    const sortLeagues = (sort_by, prop_leagues) => {
+        let l = prop_leagues ? prop_leagues : leagues
+        let sb = sortedByRef
         let d = sb.by === sort_by ? !sb.descending : true
 
         switch (sort_by) {
@@ -86,10 +86,10 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
             default:
                 break;
         }
-        setSortedBy({
+        sortedByRef.current = {
             by: sort_by,
             descending: d
-        })
+        }
         setLeagues([...l])
     }
 
@@ -102,7 +102,7 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
     }, [page])
 
     useEffect(() => {
-        setLeagues(prop_leagues)
+        sortLeagues(sortedByRef.current.by, prop_leagues)
     }, [prop_leagues])
 
     const leagues_display = searched.trim().length === 0 ? leagues :
