@@ -16,10 +16,11 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
         descending: true
     })
 
-    const sortLeagues = (sort_by, prop_leagues) => {
+    const sortLeagues = (sort_by, prop_leagues, initial = false) => {
         let l = prop_leagues ? prop_leagues : leagues
         let sb = sortedByRef.current
-        let d = sb.by === sort_by ? !sb.descending : true
+        let d = initial ? sb.descending :
+            sb.by === sort_by ? !sb.descending : true
 
         switch (sort_by) {
             case 'Record':
@@ -110,7 +111,7 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
                     .filter(slot => slot.subs.length > 0).length
             }
         })
-        sortLeagues(sortedByRef.current.by, pl)
+        sortLeagues(sortedByRef.current.by, pl, true)
     }, [prop_leagues])
 
     const leagues_display = searched.trim().length === 0 ? leagues :
@@ -211,7 +212,7 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
                                                     &nbsp;&nbsp;
                                                     <em>
                                                         {
-                                                            (league.userRoster.settings.wins / Math.max((league.userRoster.settings.wins + league.userRoster.settings.losses + league.userRoster.settings.ties)), 1).toLocaleString("en-US", { maximumFractionDigits: 4, minimumFractionDigits: 4 })
+                                                            ((league.userRoster.settings.wins / (league.userRoster.settings.wins + league.userRoster.settings.losses + league.userRoster.settings.ties)) || 0).toLocaleString("en-US", { maximumFractionDigits: 4, minimumFractionDigits: 4 })
                                                         }
                                                     </em>
                                                 </td>
@@ -219,7 +220,7 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
                                                     {
                                                         league.userRoster.settings.fpts?.toLocaleString("en-US")
                                                     } - {
-                                                        league.userRoster.settings.fpts_against?.toLocaleString("en-US")
+                                                        league.userRoster.settings.fpts_against?.toLocaleString("en-US") || 0
                                                     }
                                                 </td>
                                                 <td>
