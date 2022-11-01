@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import React, { useEffect, useState, useRef } from "react";
 import axios from 'axios';
-import axiosRetry, { exponentialDelay } from "axios-retry"
+import axiosRetry from "axios-retry"
 import { match_weekly_rankings } from './projections_stats';
 import View from "./view";
 
@@ -87,22 +87,7 @@ const Main = () => {
             }
 
             let players_all = leagues.map(league => {
-                let standings = [...league.rosters]
-                let standings_pts = [...league.rosters]
-                standings = standings.sort((a, b) =>
-                    b.settings.wins - a.settings.wins || b.settings.fpts - a.settings.fpts ||
-                    b.settings.fpts_decimal - a.settings.fpts_decimal
-                )
-                standings_pts = standings_pts.sort((a, b) =>
-                    b.settings.fpts - a.settings.fpts || b.settings.fpts_decimal - a.settings.fpts_decimal
-                )
                 return league.rosters.map(roster => {
-                    let rank = standings.findIndex(obj => {
-                        return obj.owner_id === roster.owner_id || roster.co_owners?.includes(obj.owner_id)
-                    }) + 1
-                    let rank_pts = standings_pts.findIndex(obj => {
-                        return obj.owner_id === roster.owner_id || roster.co_owners?.includes(obj.owner_id)
-                    }) + 1
                     return roster.players?.map(player_id => {
                         return {
                             id: player_id,
@@ -124,8 +109,8 @@ const Main = () => {
                             users: league.users,
                             settings: league.settings,
                             scoring_settings: league.scoring_settings,
-                            rank: rank,
-                            rank_pts: rank_pts,
+                            rank: roster.rank,
+                            rank_pts: roster.rank_points,
                             roster: roster,
                             roster_positions: league.roster_positions,
                             dynasty: league.dynasty,

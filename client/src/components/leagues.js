@@ -102,7 +102,15 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
     }, [page])
 
     useEffect(() => {
-        sortLeagues(sortedByRef.current.by, prop_leagues)
+        let pl = prop_leagues.map(l => {
+            return {
+                ...l,
+                empty_slots: l.userRoster.starters?.filter(s => s === '0').length,
+                so_slots: getLineupCheck(l.roster_positions, l.userRoster, weekly_rankings, allplayers)
+                    .filter(slot => slot.subs.length > 0).length
+            }
+        })
+        sortLeagues(sortedByRef.current.by, pl)
     }, [prop_leagues])
 
     const leagues_display = searched.trim().length === 0 ? leagues :
