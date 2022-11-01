@@ -50,16 +50,16 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
                 break;
             case 'Rank (Ovr)':
                 if (sb.descending) {
-                    l = l.sort((a, b) => a.rank - b.rank)
+                    l = l.sort((a, b) => a.userRoster.rank - b.userRoster.rank)
                 } else {
-                    l = l.sort((a, b) => b.rank - a.rank)
+                    l = l.sort((a, b) => b.userRoster.rank - a.userRoster.rank)
                 }
                 break;
             case 'Rank (PF)':
                 if (sb.descending) {
-                    l = l.sort((a, b) => a.rank_points - b.rank_points)
+                    l = l.sort((a, b) => a.userRoster.rank_points - b.userRoster.rank_points)
                 } else {
-                    l = l.sort((a, b) => b.rank_points - a.rank_points)
+                    l = l.sort((a, b) => b.userRoster.rank_points - a.userRoster.rank_points)
                 }
                 break;
             case 'League':
@@ -102,31 +102,7 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
     }, [page])
 
     useEffect(() => {
-        const l = prop_leagues.map((league, index) => {
-            league['index'] = index
-            const standings = league.rosters.sort((a, b) =>
-                b.settings.wins - a.settings.wins || b.settings.losses - a.settings.losses ||
-                b.settings.fpts - a.settings.fpts
-            )
-            const rank = standings.findIndex(obj => {
-                return obj.owner_id === user_id || obj.co_owners?.includes(user_id)
-            })
-            league['rank'] = rank + 1
-            const standings_points = league.rosters.sort((a, b) =>
-                b.settings.fpts - a.settings.fpts || b.settings.wins - a.settings.wins
-            )
-            const rank_points = standings_points.findIndex(obj => {
-                return obj.owner_id === user_id || obj.co_owners?.includes(user_id)
-            })
-            league['rank_points'] = rank_points + 1
-
-            league['empty_slots'] = league.userRoster.starters.filter(s => s === '0').length
-            league['so_slots'] = getLineupCheck(league.roster_positions, league.userRoster, weekly_rankings, allplayers)
-                .filter(slot => slot.subs.length > 0).length
-
-            return league
-        })
-        setLeagues([...l])
+        setLeagues(prop_leagues)
     }, [prop_leagues])
 
     const leagues_display = searched.trim().length === 0 ? leagues :
@@ -241,26 +217,26 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
                                                 <td>
                                                     <p
                                                         className={
-                                                            (league.rank / league.total_rosters) <= .25 ? 'green' :
-                                                                (league.rank / league.total_rosters) >= .75 ? 'red' :
+                                                            (league.userRoster.rank / league.total_rosters) <= .25 ? 'green' :
+                                                                (league.userRoster.rank / league.total_rosters) >= .75 ? 'red' :
                                                                     null
                                                         }
                                                     >
                                                         {
-                                                            league.rank
+                                                            league.userRoster.rank
                                                         }
                                                     </p>
                                                 </td>
                                                 <td>
                                                     <p
                                                         className={
-                                                            (league.rank_points / league.total_rosters) <= .25 ? 'green' :
-                                                                (league.rank_points / league.total_rosters) >= .75 ? 'red' :
+                                                            (league.userRoster.rank_points / league.total_rosters) <= .25 ? 'green' :
+                                                                (league.userRoster.rank_points / league.total_rosters) >= .75 ? 'red' :
                                                                     null
                                                         }
                                                     >
                                                         {
-                                                            league.rank_points
+                                                            league.userRoster.rank_points
                                                         }
                                                     </p>
                                                 </td>

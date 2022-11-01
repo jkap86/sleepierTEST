@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { avatar } from './misc_functions';
 import sleeperLogo from '../images/sleeper_icon.png';
 const Leagues = React.lazy(() => import('./leagues'));
@@ -7,19 +7,12 @@ const PlayerShares = React.lazy(() => import('./playershares'));
 const Leaguemates = React.lazy(() => import('./leaguemates'));
 
 const View = ({ isLoading, stateAllPlayers, stateWeeklyRankings, state_user, stateLeagues, stateLeaguemates, statePlayerShares }) => {
-    const isInitialRender = useRef(true);
     const [stateLeaguesFiltered, setStateLeaguesFiltered] = useState([]);
     const [stateLeaguematesFiltered, setStateLeaguematesFiltered] = useState([]);
     const [statePlayerSharesFiltered, setStatePlayerSharesFiltered] = useState([]);
     const [tab, setTab] = useState('Leagues');
     const [type1, setType1] = useState('All');
     const [type2, setType2] = useState('All');
-
-
-
-
-
-
 
     useEffect(() => {
         const fetchFiltered = () => {
@@ -163,11 +156,9 @@ const View = ({ isLoading, stateAllPlayers, stateWeeklyRankings, state_user, sta
             setStateLeaguematesFiltered([...filteredLeaguemates2])
             setStatePlayerSharesFiltered([...filteredPlayerShares2])
         }
-        if (isInitialRender.current) {
-            isInitialRender.current = false
-        } else {
-            fetchFiltered()
-        }
+
+        fetchFiltered()
+
     }, [type1, type2, stateLeagues])
 
     const totals = (

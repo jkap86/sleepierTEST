@@ -9,14 +9,34 @@ const getLeagueInfo = async (leagues, user_id) => {
             await axios.get(`https://api.sleeper.app/v1/league/${league.league_id}/rosters`),
             await axios.get(`https://api.sleeper.app/v1/league/${league.league_id}/users`)
         ])
-        const userRoster = rosters.data.find(r => r.owner_id === user_id || r.co_owners?.includes(user_id))
-        if (userRoster && userRoster.players) {
+
+        rosters.data
+            .sort((a, b) => b.settings.fpts - a.settings.fpts)
+            .map((roster, index) => {
+                roster['rank_points'] = index + 1
+                return roster
+            })
+
+        const standings = (
+            rosters.data
+                .sort((a, b) => b.settings.wins - a.settings.wins || a.settings.losses - b.settings.losses ||
+                    b.settings.fpts - a.settings.fpts)
+                .map((roster, index) => {
+                    roster['rank'] = index + 1
+                    return roster
+                })
+        )
+
+        const userRoster = standings.find(r => r.owner_id === user_id || r.co_owners?.includes(user_id))
+
+        if (userRoster?.players) {
             leagues_detailed.push({
                 ...league,
                 index: index,
                 rosters: rosters.data,
                 users: users.data,
-                userRoster: userRoster
+                userRoster: userRoster,
+                standings: standings
             })
         }
     }))
