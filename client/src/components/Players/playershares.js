@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react"
-const Search = React.lazy(() => import('./search'));
+const Search = React.lazy(() => import('../search'));
 const PlayerLeagues = React.lazy(() => import('./playerLeagues'));
 const PlayerStartBench = React.lazy(() => import('./playerStartBench'))
 

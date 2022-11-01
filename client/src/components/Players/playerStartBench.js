@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { avatar } from "./misc_functions";
-import { getStartedOver, getBenchedOver } from './projections_stats';
+import { avatar } from "../misc_functions";
+import { getStartedOver, getBenchedOver } from '../projections_stats';
 
 const PlayerStartBench = (props) => {
     const [leaguesStarting, setLeaguesStarting] = useState([])

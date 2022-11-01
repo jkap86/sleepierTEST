@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 const LeaguemateLeagues = React.lazy(() => import('./leaguemateLeagues'));
-const Search = React.lazy(() => import('./search'));
+const Search = React.lazy(() => import('../search'));
 
 const Leaguemates = (props) => {
     const [leaguemates, setLeaguemates] = useState([])

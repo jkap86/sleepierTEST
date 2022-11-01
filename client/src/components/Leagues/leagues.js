@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { getLineupCheck } from './projections_stats';
-const Search = React.lazy(() => import('./search'));
+import { getLineupCheck } from '../projections_stats';
+const Search = React.lazy(() => import('../search'));
 const LeagueRosters = React.lazy(() => import('./leagueRosters'));
 const LineupBreakdown = React.lazy(() => import('./lineupBreakdown'));
 

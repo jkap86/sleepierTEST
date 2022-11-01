@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import LeagueRosters from "./leagueRosters";
 
 const LeaguemateLeagues = (props) => {
     const [leagues, setLeagues] = useState([])
