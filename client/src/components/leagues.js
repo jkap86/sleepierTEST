@@ -18,7 +18,7 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
 
     const sortLeagues = (sort_by, prop_leagues) => {
         let l = prop_leagues ? prop_leagues : leagues
-        let sb = sortedByRef
+        let sb = sortedByRef.current
         let d = sb.by === sort_by ? !sb.descending : true
 
         switch (sort_by) {
