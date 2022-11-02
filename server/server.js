@@ -6,17 +6,12 @@ const cors = require('cors')
 const axios = require('axios')
 const weekly_rankings = require('./workers/worker_weeklyRankings')
 const leagues = require('./workers/worker_leagues')
-const redis = require('redis')
-const client = redis.createClient()
+const syncLeague = require('./workers/worker_leagueSync')
 
 app.use(compression())
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.resolve(__dirname, '../client/build')));
-
-client.on('connect', () => {
-    console.log('Connected!')
-})
 
 const getAllPlayers = async () => {
     const allplayers = await axios.get('https://api.sleeper.app/v1/players/nfl', { timeout: 3000 })
@@ -43,6 +38,8 @@ app.get('/user', async (req, res) => {
 })
 
 app.get('/leagues', leagues)
+
+app.get('/syncleague', syncLeague)
 
 app.get('*', async (req, res) => {
     res.sendFile(path.join(__dirname, '../client/build/index.html'));

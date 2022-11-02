@@ -6,7 +6,7 @@ const Leagues = React.lazy(() => import('./Leagues/leagues'));
 const Players = React.lazy(() => import('./Players/players'));
 const Leaguemates = React.lazy(() => import('./Leaguemates/leaguemates'));
 
-const View = ({ isLoading, stateAllPlayers, stateWeeklyRankings, state_user, stateLeagues, stateLeaguemates, statePlayerShares }) => {
+const View = ({ isLoading, stateAllPlayers, stateWeeklyRankings, state_user, stateLeagues, stateLeaguemates, statePlayerShares, syncLeague }) => {
     const [stateLeaguesFiltered, setStateLeaguesFiltered] = useState([]);
     const [stateLeaguematesFiltered, setStateLeaguematesFiltered] = useState([]);
     const [statePlayerSharesFiltered, setStatePlayerSharesFiltered] = useState([]);
@@ -250,6 +250,7 @@ const View = ({ isLoading, stateAllPlayers, stateWeeklyRankings, state_user, sta
                         allplayers={stateAllPlayers}
                         user_id={state_user.user_id}
                         avatar={avatar}
+                        syncLeague={syncLeague}
                     />
                 </React.Suspense>
             break;

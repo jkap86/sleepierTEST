@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { avatar } from "../misc_functions";
 import { getLineupCheck } from '../projections_stats';
+import throttle from 'lodash.throttle';
 const LineupBreakdown = React.lazy(() => import('./lineupBreakdown'));
 
-const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRef, rostersVisible, setRostersVisible, weekly_rankings, allplayers }) => {
+const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRef, rostersVisible, setRostersVisible, weekly_rankings, allplayers, syncLeague, user_id }) => {
+    const [syncing, setSyncing] = useState(false)
+
+    const handleSyncLeague = (league_id, user_id) => {
+        setSyncing(true)
+        syncLeague(league_id, user_id)
+        setTimeout(() => {
+            setSyncing(false)
+        }, 5000)
+    }
 
     const header = (
         <>
@@ -73,7 +83,17 @@ const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRe
                                                 rostersVisible !== league.league_id ? null :
                                                     <tr>
                                                         <td colSpan={8}>
-                                                            <div className={`nav2`}></div>
+                                                            <div className={`nav2`}>
+                                                                {
+                                                                    syncing ? null :
+                                                                        <button
+                                                                            className={'clickable'}
+                                                                            onClick={() => handleSyncLeague(league.league_id, user_id)}
+                                                                        >
+                                                                            Sync League
+                                                                        </button>
+                                                                }
+                                                            </div>
                                                             <React.Suspense fallback={
                                                                 <div className='logo_wrapper'>
                                                                     <div className='z one'>Z</div>

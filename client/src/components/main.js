@@ -216,6 +216,26 @@ const Main = () => {
 
     }, [params.username])
 
+    const syncLeague = async (league_id, user_id) => {
+        const sync = await axios.get('/syncleague', {
+            params: {
+                league_id: league_id,
+                user_id: user_id
+            }
+        })
+        const leagues = stateLeagues
+        const leaguesSynced = leagues.map(league => {
+            if (league.league_id === sync.data.league_id) {
+                league = {
+                    ...sync.data,
+                    index: league.index
+                }
+            }
+            return league
+        })
+        setStateLeagues([...leaguesSynced])
+    }
+
     return <>
         <View
             isLoading={isLoading}
@@ -225,6 +245,7 @@ const Main = () => {
             stateLeagues={stateLeagues}
             stateLeaguemates={stateLeaguemates}
             statePlayerShares={statePlayerShares}
+            syncLeague={syncLeague}
         />
     </>
 }

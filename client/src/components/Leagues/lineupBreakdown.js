@@ -35,7 +35,9 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, weekly_rankings, 
         </tbody>
     )
 
-    const subs = activeSlot ? activeSlot.subs : roster.players.filter(p => !roster.starters.includes(p))
+    const subs = activeSlot ? activeSlot.subs :
+        roster.players.filter(p => !roster.starters?.includes(p) && !roster.taxi?.includes(p))
+    const taxi = activeSlot ? activeSlot.subs_taxi : roster.taxi
 
     return <>
         <table className={`table${type} lineup`}>
@@ -50,6 +52,13 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, weekly_rankings, 
             {display}
         </table>
         <table className={`table${type} subs`}>
+            <thead>
+                <tr className={'single'}>
+                    <th colSpan={9}>
+                        {activeSlot ? 'Better Options' : 'Bench'}
+                    </th>
+                </tr>
+            </thead>
             <tbody>
                 {
                     subs
@@ -80,6 +89,46 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, weekly_rankings, 
                         )
                 }
             </tbody>
+            {
+                taxi?.length > 1 ?
+                    <thead>
+                        <tr className={'single'}>
+                            <th colSpan={9}>Taxi</th>
+                        </tr>
+                    </thead>
+                    : null
+            }
+            {
+                taxi?.length > 1 ?
+                    <tbody>
+                        {taxi
+                            ?.map((bp, index) =>
+                                <tr
+                                    key={`${bp}_${index}`}
+                                >
+                                    <td colSpan={1}>
+                                        {allplayers[bp]?.position}
+                                    </td>
+                                    <td colSpan={5} className={'left'}>
+                                        <p>
+                                            {
+                                                avatar(bp, allplayers[bp]?.full_name, 'player')
+                                            }
+                                            {allplayers[bp]?.full_name}
+                                        </p>
+                                    </td>
+                                    <td colSpan={1}>
+                                        {weekly_rankings.find(w_r => w_r.id === bp)?.rank_ecr || '-'}
+                                    </td>
+                                    <td colSpan={2}>
+                                        {weekly_rankings.find(w_r => w_r.id === bp)?.pos_rank || '-'}
+                                    </td>
+                                </tr>
+                            )
+                        }
+                    </tbody>
+                    : null
+            }
         </table>
     </>
 }

@@ -82,20 +82,29 @@ export const getLineupCheck = (roster_positions, roster, weekly_rankings, allpla
         const cur_matched = weekly_rankings.find(w_r => w_r.id === cur_id)
         const cur_rank = cur_matched?.rank_ecr
         const cur_pos_rank = cur_matched?.pos_rank
+        const subs = roster.players.filter(p =>
+            !roster.starters.includes(p) && !roster.taxi?.includes(p) &&
+            position_map[slot].includes(allplayers[p]?.position) &&
+            (weekly_rankings.find(w_r => w_r.id === p)?.rank_ecr || 999) < (cur_rank || 999)
+        )
+        const subs_taxi = roster.taxi?.filter(p =>
+            roster.taxi?.includes(p) &&
+            position_map[slot].includes(allplayers[p]?.position) &&
+            (weekly_rankings.find(w_r => w_r.id === p)?.rank_ecr || 999) < (cur_rank || 999)
+        )
+
         lineup_check.push({
             index: index,
             slot: slot,
             cur_id: cur_id,
             cur_rank: cur_rank,
             cur_pos_rank: cur_pos_rank,
-            subs: roster.players
-                .filter(p =>
-                    optimal_lineup.includes(p) && !roster.starters.includes(p) &&
-                    position_map[slot].includes(allplayers[p]?.position) &&
-                    (weekly_rankings.find(w_r => w_r.id === p)?.rank_ecr || 999) < (cur_rank || 999)
-                )
+            subs: subs,
+            subs_taxi: subs_taxi
         })
     })
+
+
 
     return lineup_check
 }

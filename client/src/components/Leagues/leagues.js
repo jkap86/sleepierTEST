@@ -4,7 +4,7 @@ const Search = React.lazy(() => import('../search'));
 const LeaguesStandings = React.lazy(() => import('./leaguesStandings'));
 const LeaguesLineupCheck = React.lazy(() => import('./leaguesLineupCheck'));
 
-const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar }) => {
+const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, syncLeague }) => {
     const [leagues, setLeagues] = useState([])
     const [searched, setSearched] = useState('')
     const [page, setPage] = useState(1)
@@ -129,6 +129,8 @@ const Leagues = ({ prop_leagues, weekly_rankings, allplayers, user_id, avatar })
             setRostersVisible={setRostersVisible}
             weekly_rankings={weekly_rankings}
             allplayers={allplayers}
+            syncLeague={syncLeague}
+            user_id={user_id}
         />
         :
         <LeaguesStandings
