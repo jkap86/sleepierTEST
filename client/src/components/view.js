@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { avatar } from './misc_functions';
 import sleeperLogo from '../images/sleeper_icon.png';
 const Leagues = React.lazy(() => import('./Leagues/leagues'));
-const PlayerShares = React.lazy(() => import('./Players/playershares'));
+const Players = React.lazy(() => import('./Players/players'));
 const Leaguemates = React.lazy(() => import('./Leaguemates/leaguemates'));
 
 const View = ({ isLoading, stateAllPlayers, stateWeeklyRankings, state_user, stateLeagues, stateLeaguemates, statePlayerShares }) => {
@@ -256,7 +256,7 @@ const View = ({ isLoading, stateAllPlayers, stateWeeklyRankings, state_user, sta
         case 'Players':
             display = isLoading ? loadingMessage :
                 <React.Suspense fallback={loadingMessage}>
-                    <PlayerShares
+                    <Players
                         player_shares={statePlayerSharesFiltered}
                         weekly_rankings={stateWeeklyRankings}
                         allplayers={stateAllPlayers}
