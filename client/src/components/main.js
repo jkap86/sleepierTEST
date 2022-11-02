@@ -19,7 +19,8 @@ const Main = () => {
         retries: 5,
         retryCondition: () => {
             return true
-        }
+        },
+        retryDelay: axiosRetry.exponentialDelay
     })
 
     useEffect(() => {

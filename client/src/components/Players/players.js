@@ -12,10 +12,45 @@ const PlayerShares = ({ player_shares, weekly_rankings, allplayers, user_id }) =
     const [filterTeam, setFilterTeam] = useState('All')
     const [displayRankings, setDispayRankings] = useState(false)
     const rowRef = useRef(null)
+    const sortedByRef = useRef({
+        by: 'default',
+        descending: true
+    })
+
+    
+    const sortPlayers = (sort_by, player_shares, initial = false) => {
+        let l = player_shares? player_shares : playershares
+        let sb = sortedByRef.current
+        let d = initial ? sb.descending :
+            sb.by === sort_by ? !sb.descending : true
+
+        switch (sort_by) {
+            case 'Record':
+                if (sb.descending) {
+                    l = l.sort((a, b) =>
+                        (b.userRoster.settings.wins / (b.userRoster.settings.wins + b.userRoster.settings.losses + b.userRoster.settings.ties)) -
+                        (a.userRoster.settings.wins / (a.userRoster.settings.wins + a.userRoster.settings.losses + a.userRoster.settings.ties))
+                    )
+                } else {
+                    l = l.sort((a, b) =>
+                        (a.userRoster.settings.wins / (a.userRoster.settings.wins + a.userRoster.settings.losses + a.userRoster.settings.ties)) -
+                        (b.userRoster.settings.wins / (b.userRoster.settings.wins + b.userRoster.settings.losses + b.userRoster.settings.ties))
+                    )
+                }
+                break;
+            default:
+                l = l.sort((a, b) => b.leagues_owned.length - a.leagues_owned.length)
+                break;
+        }
+        sortedByRef.current = {
+            by: sort_by,
+            descending: d
+        }
+        setPlayershares([...l])
+    }
 
     useEffect(() => {
-        setPlayershares(player_shares.sort((a, b) => b.leagues_owned.length - a.leagues_owned.length))
-
+        sortPlayers(sortedByRef.current.by, player_shares, true)
     }, [weekly_rankings, player_shares])
 
     useEffect(() => {

@@ -1,6 +1,15 @@
 const express = require('express')
 const router = express.Router()
 const axios = require('axios')
+const axiosRetry = require('axios-retry')
+
+axiosRetry(axios, {
+    retries: 5,
+    retryCondition: () => {
+        return true
+    },
+    retryDelay: axiosRetry.exponentialDelay
+})
 
 const getLeagueInfo = async (leagues, user_id) => {
     let leagues_detailed = []
