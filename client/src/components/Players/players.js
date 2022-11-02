@@ -16,7 +16,7 @@ const PlayerShares = ({ player_shares, weekly_rankings, allplayers, user_id }) =
     useEffect(() => {
         setPlayershares(player_shares.sort((a, b) => b.leagues_owned.length - a.leagues_owned.length))
 
-    }, [weekly_rankings])
+    }, [weekly_rankings, player_shares])
 
     useEffect(() => {
         setPage(1)
