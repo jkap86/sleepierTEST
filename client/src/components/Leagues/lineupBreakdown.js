@@ -35,7 +35,7 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, weekly_rankings, 
         </tbody>
     )
 
-    const subs = activeSlot ? activeSlot.subs : roster.players
+    const subs = activeSlot ? activeSlot.subs : roster.players.filter(p => !roster.starters.includes(p))
 
     return <>
         <table className={`table${type} lineup`}>
@@ -53,7 +53,6 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, weekly_rankings, 
             <tbody>
                 {
                     subs
-                        .filter(p => !roster.starters.includes(p))
                         .sort((a, b) => (weekly_rankings.find(w_r => w_r.id === a)?.rank_ecr || 999) -
                             (weekly_rankings.find(w_r => w_r.id === b)?.rank_ecr || 999))
                         .map((bp, index) =>

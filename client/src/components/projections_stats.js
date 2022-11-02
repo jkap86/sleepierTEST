@@ -56,27 +56,48 @@ export const getLineupCheck = (roster_positions, roster, weekly_rankings, allpla
 
     const starting_slots = roster_positions.filter(x => Object.keys(position_map).includes(x))
 
+    let player_ranks = roster.players.map(player => {
+        const matched = weekly_rankings.find(w_r => w_r.id === player)
+        return {
+            id: player,
+            rank: matched?.rank_ecr,
+            rank_pos: matched?.pos_rank
+        }
+    })
+
     let optimal_lineup = []
     starting_slots.map((slot, index) => {
-        const cur_rank = weekly_rankings.find(x => x.id === roster.starters[index])?.rank_ecr || 999
-        const cur_pos_rank = weekly_rankings.find(x => x.id === roster.starters[index])?.pos_rank
-        const subs = roster.players.filter(p =>
-            !(roster.starters?.includes(p)) &&
-            position_map[slot].includes(allplayers[p]?.position) &&
-            weekly_rankings.find(w_r => w_r.id === p)?.rank_ecr < cur_rank
-        )
-        optimal_lineup.push({
+        const slot_options = player_ranks
+            .filter(p => position_map[slot].includes(allplayers[p.id]?.position))
+            .sort((a, b) => (a.rank || 999) - (b.rank || 999))
+
+        const optimal_player = slot_options[0].id
+        player_ranks = player_ranks.filter(p => p.id !== optimal_player)
+        optimal_lineup.push(optimal_player)
+    })
+
+    let lineup_check = []
+    starting_slots.map((slot, index) => {
+        const cur_id = roster.starters[index]
+        const cur_matched = weekly_rankings.find(w_r => w_r.id === cur_id)
+        const cur_rank = cur_matched?.rank_ecr
+        const cur_pos_rank = cur_matched?.pos_rank
+        lineup_check.push({
             index: index,
             slot: slot,
-            cur_id: roster.starters[index],
+            cur_id: cur_id,
             cur_rank: cur_rank,
             cur_pos_rank: cur_pos_rank,
-            subs: subs
+            subs: roster.players
+                .filter(p =>
+                    optimal_lineup.includes(p) && !roster.starters.includes(p) &&
+                    position_map[slot].includes(allplayers[p]?.position) &&
+                    (weekly_rankings.find(w_r => w_r.id === p)?.rank_ecr || 999) < (cur_rank || 999)
+                )
         })
     })
 
-
-    return optimal_lineup
+    return lineup_check
 }
 
 export const getStartedOver = (player_id, roster, roster_positions, weekly_rankings, allplayers, player_rank) => {
