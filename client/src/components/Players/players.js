@@ -4,7 +4,7 @@ const PlayersOwnership = React.lazy(() => import('./playersOwnership'));
 const PlayersRankProj = React.lazy(() => import('./playersRank_Proj'));
 
 
-const PlayerShares = ({ player_shares, allplayers, user_id }) => {
+const PlayerShares = ({ player_shares, allplayers, user_id, sendRankEdit }) => {
     const [playershares, setPlayershares] = useState([])
     const [searched, setSearched] = useState('')
     const [leaguesVisible, setLeaguesVisible] = useState('')
@@ -74,7 +74,6 @@ const PlayerShares = ({ player_shares, allplayers, user_id }) => {
     const display = displayRankings ?
         <PlayersRankProj
             playershares_display={playershares_display.sort((a, b) => (allplayers[a.id]?.rank_ecr || 999) - (allplayers[b.id]?.rank_ecr || 999))}
-            playershares={playershares}
             page={page}
             setPage={setPage}
             leaguesVisible={leaguesVisible}
@@ -82,6 +81,7 @@ const PlayerShares = ({ player_shares, allplayers, user_id }) => {
             rowRef={rowRef}
             user_id={user_id}
             allplayers={allplayers}
+            sendRankEdit={sendRankEdit}
         />
         :
         <PlayersOwnership

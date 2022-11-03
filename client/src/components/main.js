@@ -235,6 +235,26 @@ const Main = () => {
         setStateLeagues([...leaguesSynced])
     }
 
+    const handleRankEdit = (player_id, newRank) => {
+        let rankings = stateAllPlayers
+        const prevRank = rankings[player_id].rank_ecr
+        Object.keys(rankings)
+            .map((player, index) => {
+                if (player === player_id) {
+                    rankings[player].rank_ecr = newRank
+                } else {
+                    if (rankings[player].rank_ecr > prevRank) {
+                        rankings[player].rank_ecr = rankings[player].rank_ecr - 1
+                    }
+                    if (rankings[player].rank_ecr >= newRank) {
+                        rankings[player].rank_ecr = rankings[player].rank_ecr + 1
+                    }
+                }
+            })
+
+        setStateAllPlayers(rankings)
+    }
+
     return <>
         <View
             isLoading={isLoading}
@@ -244,6 +264,7 @@ const Main = () => {
             stateLeaguemates={stateLeaguemates}
             statePlayerShares={statePlayerShares}
             syncLeague={syncLeague}
+            sendRankEdit={handleRankEdit}
         />
     </>
 }

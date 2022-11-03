@@ -84,6 +84,13 @@ div.logo_wrapper div.three {
   cursor: pointer;
 }
 
+input.editRank {
+  width: 75%;
+  font-size: 2rem;
+  text-align: center;
+  background-color: var(--color2);
+}
+
 /* Hompage */
 div.home_wrapper {
   width: 100%;

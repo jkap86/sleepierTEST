@@ -5,7 +5,8 @@ export const match_weekly_rankings = async (weekly_rankings, allplayers) => {
             (['QB', 'RB', 'FB', 'WR', 'TE'].includes(allplayers[x].position))
         )
 
-    const matched_rankings = Object.keys(weekly_rankings).map(fp_id => {
+
+    Object.keys(weekly_rankings).map(fp_id => {
         const searchName = (
             weekly_rankings[fp_id].player_name
                 .split(' ')
@@ -36,6 +37,9 @@ export const match_weekly_rankings = async (weekly_rankings, allplayers) => {
             ...allplayers[match_id],
             ...weekly_rankings[fp_id]
         }
+    })
+    Object.keys(allplayers).filter(id => !allplayers[id].rank_ecr).map(id => {
+        allplayers[id].rank_ecr = 999
     })
     return (allplayers)
 }
