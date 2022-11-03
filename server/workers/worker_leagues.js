@@ -8,7 +8,7 @@ axiosRetry(axios, {
     retryCondition: () => {
         return true
     },
-    retryDelay: 2000
+    retryDelay: () => 2000
 })
 
 const getLeagueInfo = async (leagues, user_id) => {

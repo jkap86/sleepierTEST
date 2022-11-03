@@ -70,10 +70,15 @@ const PlayerShares = ({ player_shares, allplayers, user_id, sendRankEdit }) => {
         (filterTeam === 'All' || allplayers[x.id]?.team === filterTeam) &&
         (searched.trim().length === 0 || allplayers[x.id]?.full_name === searched)
     )
+    if (displayRankings) {
+        playershares_display = playershares_display
+            .filter(ps => ['QB', 'RB', 'FB', 'WR', 'TE'].includes(allplayers[ps.id]?.position))
+            .sort((a, b) => (allplayers[a.id]?.rank_ecr || 999) - (allplayers[b.id]?.rank_ecr || 999))
+    }
 
     const display = displayRankings ?
         <PlayersRankProj
-            playershares_display={playershares_display.sort((a, b) => (allplayers[a.id]?.rank_ecr || 999) - (allplayers[b.id]?.rank_ecr || 999))}
+            playershares_display={playershares_display}
             page={page}
             setPage={setPage}
             leaguesVisible={leaguesVisible}

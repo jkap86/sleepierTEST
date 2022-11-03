@@ -3,15 +3,16 @@
 import React, { useState, useEffect } from "react";
 import { avatar } from "../misc_functions";
 import { getNewRank } from "../projections_stats";
+import { writeFile, utils } from 'xlsx';
 const PlayerStartBench = React.lazy(() => import('./playerStartBench'))
 
 const PlayersRankProj = ({ playershares_display, page, setPage, leaguesVisible, setLeaguesVisible, rowRef, user_id, allplayers, sendRankEdit }) => {
     const [edit, setEdit] = useState(false)
-    const [rankingEdits, setRankingEdits] = useState({})
     const [rankings, setRankings] = useState({})
 
     useEffect(() => {
         setRankings(allplayers)
+        console.log(allplayers)
     }, [allplayers])
 
     const handleRankChange = (e, player_id) => {
@@ -33,41 +34,38 @@ const PlayersRankProj = ({ playershares_display, page, setPage, leaguesVisible, 
         setEdit(false)
     }
 
-    /*
-    const saveRankEdits = () => {
-        let changes = rankingEdits
-        sendRankEdit(changes)
-        setEdit(false)
-        setRankingEdits({})
+    const exportRankings = () => {
+        const data = Object.keys(allplayers)
+            .filter(id => playershares_display.find(ps => ps.id === id))
+            .map(id => {
+                return {
+                    rank: allplayers[id].rank_ecr,
+                    player: allplayers[id].full_name,
+                    position: allplayers[id].position,
+                    team: allplayers[id].team || 'FA',
+                    opponent: allplayers[id]?.player_opponent
+                }
+            })
+            .sort((a, b) => a.rank - b.rank)
+        const worksheet = utils.json_to_sheet(data)
+        const workbook = utils.book_new()
+        utils.book_append_sheet(workbook, worksheet, "Rankings")
+        writeFile(workbook, "SleepierRankings.csv")
     }
 
-    const handleEditRank = (e, player_id) => {
-        let changes = rankingEdits
-        const newRank = parseInt(e.target.value)
-        const prevRank = allplayers[player_id].rank_ecr
-        if (newRank > 0 && newRank <= 999) {
-            changes[player_id] = {
-                prevRank: prevRank,
-                newRank: newRank
-            }
-        }
-        setRankingEdits(changes)
-    }
-
-    const previewRank = (player) => {
-        const changes = rankingEdits
-        let incrementedRank = allplayers[player].rank_ecr
-        Object.keys(changes).map(change_id => {
-            incrementedRank = getNewRank(allplayers, changes[change_id].prevRank, changes[change_id].newRank, change_id, player, incrementedRank)
-        })
-        return incrementedRank
-
-    }
-*/
     const header = (
         <>
             <tr className="main_header double">
-                <th colSpan={3} rowSpan={2}>Player</th>
+                <th colSpan={3}
+                    rowSpan={2}
+                >
+                    <i
+                        onClick={() => exportRankings()}
+                        className={'fa fa-file clickable left'}
+                    >
+                    </i>
+                    Player
+                </th>
                 <th colSpan={2}>
                     {
                         edit ?
@@ -132,7 +130,7 @@ const PlayersRankProj = ({ playershares_display, page, setPage, leaguesVisible, 
                                                         {
                                                             avatar(player.id, allplayers[player.id]?.full_name, 'player')
                                                         }
-                                                        {allplayers[player.id]?.position}&nbsp;
+                                                        {allplayers[player.id]?.position || player.id}&nbsp;
                                                         {allplayers[player.id]?.full_name || player.player_name}&nbsp;
                                                         {allplayers[player.id]?.team}
                                                     </p>

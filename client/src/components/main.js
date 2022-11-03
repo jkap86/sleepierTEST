@@ -9,7 +9,6 @@ const Main = () => {
     const params = useParams();
     const [isLoading, setIsLoading] = useState(false);
     const [stateAllPlayers, setStateAllPlayers] = useState({});
-    const [stateWeeklyRankings, setStateWeeklyRankings] = useState([]);
     const [state_user, setState_User] = useState(false);
     const [stateLeagues, setStateLeagues] = useState([]);
     const [stateLeaguemates, setStateLeaguemates] = useState([]);
@@ -28,7 +27,7 @@ const Main = () => {
             const allplayers = await axios.get('/allplayers')
             const weekly_rankings = await axios.get('/weeklyrankings')
             const matched_rankings = await match_weekly_rankings(weekly_rankings.data, allplayers.data)
-
+            console.log(Object.keys(allplayers.data).map(id => id))
             setStateAllPlayers(matched_rankings)
         }
         fetchData()
@@ -51,7 +50,7 @@ const Main = () => {
             const fetchSync = async () => {
                 const weekly_rankings = await axios.get('/weeklyrankings')
                 const matched_rankings = await match_weekly_rankings(weekly_rankings.data, stateAllPlayers)
-                setStateWeeklyRankings(matched_rankings)
+                setStateAllPlayers(matched_rankings)
             }
             fetchSync()
         }, 1000 * 60 * 15)

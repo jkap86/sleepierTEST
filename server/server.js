@@ -15,6 +15,7 @@ app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 const getAllPlayers = async () => {
     const allplayers = await axios.get('https://api.sleeper.app/v1/players/nfl', { timeout: 3000 })
+
     app.set('allplayers', allplayers.data)
 }
 getAllPlayers()
