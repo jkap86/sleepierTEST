@@ -55,7 +55,19 @@ const PlayersRankProj = ({ playershares_display, playershares, page, setPage, le
                                                 <td colSpan={1}>{allplayers[player.id]?.rank_ecr || 999}</td>
                                                 <td colSpan={1}>{allplayers[player.id]?.rank_min || '-'}</td>
                                                 <td colSpan={1}>{allplayers[player.id]?.rank_max || '-'}</td>
-                                                <td colSpan={1}>{allplayers[player.id]?.pos_rank || '-'}</td>
+                                                <td colSpan={1}>
+                                                    {allplayers[player.id]?.position === 'FB' ? 'RB' : allplayers[player.id]?.position}
+                                                    {
+
+                                                        (Object.keys(allplayers)
+                                                            .filter(ap =>
+                                                                allplayers[ap].position === allplayers[player.id]?.position ||
+                                                                (allplayers[player.id]?.position === 'FB' && ['FB', 'RB'].includes(allplayers[ap].position))
+                                                            )
+                                                            .sort((a, b) => (allplayers[a].rank_ecr || 999) - (allplayers[b].rank_ecr || 999))
+                                                            .indexOf(player.id) + 1)
+                                                    }
+                                                </td>
                                                 <td colSpan={2}>{allplayers[player.id]?.player_opponent || '-'}</td>
                                                 <td colSpan={1}>
                                                     {

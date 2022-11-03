@@ -106,7 +106,7 @@ const PlayerShares = ({ player_shares, allplayers, user_id }) => {
             className={displayRankings ? 'active clickable' : 'clickable'}
             onClick={() => setDispayRankings(true)}
         >
-            Rankings/Projections
+            Rankings
         </button>
         <button
             className={!displayRankings ? 'active clickable' : 'clickable'}
