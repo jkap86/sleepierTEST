@@ -32,17 +32,16 @@ export const match_weekly_rankings = async (weekly_rankings, allplayers) => {
                 )
             )
         )
-        return {
-            ...weekly_rankings[fp_id],
-            id: match_id || 0,
-            searchName: searchName
+        allplayers[match_id] = {
+            ...allplayers[match_id],
+            ...weekly_rankings[fp_id]
         }
     })
-    return (matched_rankings.sort((a, b) => a.rank_ecr - b.rank_ecr))
+    return (allplayers)
 }
 
 
-export const getLineupCheck = (roster_positions, roster, weekly_rankings, allplayers) => {
+export const getLineupCheck = (roster_positions, roster, allplayers) => {
     const position_map = {
         'QB': ['QB'],
         'RB': ['RB', 'FB'],
@@ -57,11 +56,10 @@ export const getLineupCheck = (roster_positions, roster, weekly_rankings, allpla
     const starting_slots = roster_positions.filter(x => Object.keys(position_map).includes(x))
 
     let player_ranks = roster.players.map(player => {
-        const matched = weekly_rankings.find(w_r => w_r.id === player)
         return {
             id: player,
-            rank: matched?.rank_ecr,
-            rank_pos: matched?.pos_rank
+            rank: allplayers[player]?.rank_ecr,
+            rank_pos: allplayers[player]?.pos_rank
         }
     })
 
@@ -79,18 +77,18 @@ export const getLineupCheck = (roster_positions, roster, weekly_rankings, allpla
     let lineup_check = []
     starting_slots.map((slot, index) => {
         const cur_id = roster.starters[index]
-        const cur_matched = weekly_rankings.find(w_r => w_r.id === cur_id)
+        const cur_matched = allplayers[cur_id]
         const cur_rank = cur_matched?.rank_ecr
         const cur_pos_rank = cur_matched?.pos_rank
         const subs = roster.players.filter(p =>
             !roster.starters.includes(p) && !roster.taxi?.includes(p) &&
             position_map[slot].includes(allplayers[p]?.position) &&
-            (weekly_rankings.find(w_r => w_r.id === p)?.rank_ecr || 999) < (cur_rank || 999)
+            (allplayers[p]?.rank_ecr || 999) < (cur_rank || 999)
         )
         const subs_taxi = roster.taxi?.filter(p =>
             roster.taxi?.includes(p) &&
             position_map[slot].includes(allplayers[p]?.position) &&
-            (weekly_rankings.find(w_r => w_r.id === p)?.rank_ecr || 999) < (cur_rank || 999)
+            (allplayers[p]?.rank_ecr || 999) < (cur_rank || 999)
         )
 
         lineup_check.push({
@@ -109,7 +107,7 @@ export const getLineupCheck = (roster_positions, roster, weekly_rankings, allpla
     return lineup_check
 }
 
-export const getStartedOver = (player_id, roster, roster_positions, weekly_rankings, allplayers, player_rank) => {
+export const getStartedOver = (player_id, roster, roster_positions, allplayers, player_rank) => {
     const position_map = {
         'QB': ['QB'],
         'RB': ['RB', 'FB'],
@@ -126,13 +124,13 @@ export const getStartedOver = (player_id, roster, roster_positions, weekly_ranki
     const subs = roster.players.filter(p =>
         !roster.starters.includes(p) &&
         position_map[slot].includes(allplayers[p].position) &&
-        weekly_rankings.find(w_r => w_r.id === p)?.rank_ecr < player_rank
+        allplayers[p]?.rank_ecr < player_rank
     )
 
     return subs.length > 0 ? subs : null
 }
 
-export const getBenchedOver = (player_id, roster, roster_positions, weekly_rankings, allplayers, player_rank) => {
+export const getBenchedOver = (player_id, roster, roster_positions, allplayers, player_rank) => {
     const position_map = {
         'QB': ['QB'],
         'RB': ['RB', 'FB'],
@@ -145,7 +143,7 @@ export const getBenchedOver = (player_id, roster, roster_positions, weekly_ranki
     }
 
     const slots = roster_positions.map((slot, index) => {
-        const rank = weekly_rankings.find(w_r => w_r.id === roster.starters[index])
+        const rank = allplayers[roster.starters[index]]
         const rank_ovr = rank?.rank_ecr
         const rank_pos = rank?.pos_rank
         return {

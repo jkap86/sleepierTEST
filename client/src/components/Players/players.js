@@ -4,7 +4,7 @@ const PlayersOwnership = React.lazy(() => import('./playersOwnership'));
 const PlayersRankProj = React.lazy(() => import('./playersRank_Proj'));
 
 
-const PlayerShares = ({ player_shares, weekly_rankings, allplayers, user_id }) => {
+const PlayerShares = ({ player_shares, allplayers, user_id }) => {
     const [playershares, setPlayershares] = useState([])
     const [searched, setSearched] = useState('')
     const [leaguesVisible, setLeaguesVisible] = useState('')
@@ -17,9 +17,9 @@ const PlayerShares = ({ player_shares, weekly_rankings, allplayers, user_id }) =
         descending: true
     })
 
-    
+
     const sortPlayers = (sort_by, player_shares, initial = false) => {
-        let l = player_shares? player_shares : playershares
+        let l = player_shares ? player_shares : playershares
         let sb = sortedByRef.current
         let d = initial ? sb.descending :
             sb.by === sort_by ? !sb.descending : true
@@ -51,7 +51,7 @@ const PlayerShares = ({ player_shares, weekly_rankings, allplayers, user_id }) =
 
     useEffect(() => {
         sortPlayers(sortedByRef.current.by, player_shares, true)
-    }, [weekly_rankings, player_shares])
+    }, [player_shares, allplayers])
 
     useEffect(() => {
         setPage(1)
@@ -65,7 +65,7 @@ const PlayerShares = ({ player_shares, weekly_rankings, allplayers, user_id }) =
         })
     }, [page])
 
-    let playershares_display = displayRankings ? weekly_rankings : playershares
+    let playershares_display = playershares
     playershares_display = playershares_display.filter(x =>
         (filterTeam === 'All' || allplayers[x.id]?.team === filterTeam) &&
         (searched.trim().length === 0 || allplayers[x.id]?.full_name === searched)
@@ -73,7 +73,7 @@ const PlayerShares = ({ player_shares, weekly_rankings, allplayers, user_id }) =
 
     const display = displayRankings ?
         <PlayersRankProj
-            playershares_display={playershares_display}
+            playershares_display={playershares_display.sort((a, b) => (allplayers[a.id]?.rank_ecr || 999) - (allplayers[b.id]?.rank_ecr || 999))}
             playershares={playershares}
             page={page}
             setPage={setPage}
@@ -82,7 +82,6 @@ const PlayerShares = ({ player_shares, weekly_rankings, allplayers, user_id }) =
             rowRef={rowRef}
             user_id={user_id}
             allplayers={allplayers}
-            weekly_rankings={weekly_rankings}
         />
         :
         <PlayersOwnership

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { avatar } from "../misc_functions";
 import { getStartedOver, getBenchedOver } from '../projections_stats';
 
-const PlayerStartBench = (props) => {
+const PlayerStartBench = ({ type, player_id, leagues_starting, leagues_benched, user_id, player_rank, allplayers }) => {
     const [leaguesStarting, setLeaguesStarting] = useState([])
     const [leaguesBenched, setLeaguesBenched] = useState([])
     const [tab, setTab] = useState('Owned')
@@ -20,17 +20,17 @@ const PlayerStartBench = (props) => {
     }
 
     useEffect(() => {
-        setLeaguesStarting(props.leagues_starting)
-        setLeaguesBenched(props.leagues_benched)
-    }, [props.leagues_starting, props.leagues_benched])
+        setLeaguesStarting(leagues_starting)
+        setLeaguesBenched(leagues_benched)
+    }, [leagues_starting, leagues_benched])
 
 
 
     return <>
-        <div className={`nav${props.type}`}>
+        <div className={`nav${type}`}>
 
         </div>
-        <table className={`table${props.type} lineup`}>
+        <table className={`table${type} lineup`}>
             <thead>
                 <tr className={'single'}>
                     <th colSpan={1}>Slot</th>
@@ -51,7 +51,7 @@ const PlayerStartBench = (props) => {
                                         >
                                             <td colSpan={1}>
                                                 {ls.roster_positions[
-                                                    ls.userRoster.starters.indexOf(props.player_id)
+                                                    ls.userRoster.starters.indexOf(player_id)
                                                 ].replace('SUPER_FLEX', 'SF')}
                                             </td>
                                             <td colSpan={4} className={'left'}>
@@ -64,7 +64,7 @@ const PlayerStartBench = (props) => {
                                             </td>
                                             <td>
                                                 {getStartedOver(
-                                                    props.player_id, ls.userRoster, ls.roster_positions, props.weekly_rankings, props.allplayers, props.player_rank
+                                                    player_id, ls.userRoster, ls.roster_positions, allplayers, player_rank
                                                 )?.length || 0}
                                             </td>
                                         </tr>
@@ -80,19 +80,19 @@ const PlayerStartBench = (props) => {
                                             <tbody>
                                                 {
                                                     getStartedOver(
-                                                        props.player_id, ls.userRoster, ls.roster_positions, props.weekly_rankings, props.allplayers, props.player_rank
+                                                        player_id, ls.userRoster, ls.roster_positions, allplayers, player_rank
                                                     )?.map(sub =>
                                                         <tr>
                                                             <td colSpan={3} className={'left'}>
                                                                 <p>
-                                                                    {`${props.allplayers[sub]?.position} ${props.allplayers[sub]?.full_name} ${props.allplayers[sub]?.team || 'FA'}`}
+                                                                    {`${allplayers[sub]?.position} ${allplayers[sub]?.full_name} ${allplayers[sub]?.team || 'FA'}`}
                                                                 </p>
                                                             </td>
                                                             <td colSpan={1}>
-                                                                {props.weekly_rankings.find(w_r => w_r.id === sub)?.rank_ecr || 999}
+                                                                {allplayers[sub]?.rank_ecr || 999}
                                                             </td>
                                                             <td colSpan={1}>
-                                                                {props.weekly_rankings.find(w_r => w_r.id === sub)?.pos_rank || 999}
+                                                                {allplayers[sub]?.pos_rank || 999}
                                                             </td>
                                                         </tr>
                                                     )
@@ -111,7 +111,7 @@ const PlayerStartBench = (props) => {
                 )
             }
         </table>
-        <table className={`table${props.type} subs`}>
+        <table className={`table${type} subs`}>
             <thead>
                 <tr className={'single'}>
                     <th colSpan={3}>Benched</th>
@@ -140,7 +140,7 @@ const PlayerStartBench = (props) => {
                                             <td>
                                                 {
                                                     getBenchedOver(
-                                                        props.player_id, ls.userRoster, ls.roster_positions, props.weekly_rankings, props.allplayers, props.player_rank
+                                                        player_id, ls.userRoster, ls.roster_positions, allplayers, player_rank
                                                     )?.length || 0
                                                 }
                                             </td>
@@ -153,7 +153,7 @@ const PlayerStartBench = (props) => {
                                                             <tbody>
                                                                 {
                                                                     getBenchedOver(
-                                                                        props.player_id, ls.userRoster, ls.roster_positions, props.weekly_rankings, props.allplayers, props.player_rank
+                                                                        player_id, ls.userRoster, ls.roster_positions, allplayers, player_rank
                                                                     )?.map((player, index) =>
                                                                         <tr key={`${player}_${index}`}>
                                                                             <td colSpan={2}>
@@ -161,7 +161,7 @@ const PlayerStartBench = (props) => {
                                                                             </td>
                                                                             <td colSpan={5} className={'left'}>
                                                                                 <p>
-                                                                                    {props.allplayers[player.starter]?.full_name || 'Empty Slot'}
+                                                                                    {allplayers[player.starter]?.full_name || 'Empty Slot'}
                                                                                 </p>
                                                                             </td>
                                                                             <td colSpan={3}>

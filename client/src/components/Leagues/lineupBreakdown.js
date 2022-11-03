@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const LineupBreakdown = ({ type, roster, lineup_check, avatar, weekly_rankings, allplayers }) => {
+const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers }) => {
     const [activeSlot, setActiveSlot] = useState(null)
 
     const display = lineup_check.map((slot, index) =>
@@ -62,8 +62,8 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, weekly_rankings, 
             <tbody>
                 {
                     subs
-                        .sort((a, b) => (weekly_rankings.find(w_r => w_r.id === a)?.rank_ecr || 999) -
-                            (weekly_rankings.find(w_r => w_r.id === b)?.rank_ecr || 999))
+                        .sort((a, b) => (allplayers[a]?.rank_ecr || 999) -
+                            (allplayers[b]?.rank_ecr || 999))
                         .map((bp, index) =>
                             <tr
                                 key={`${bp}_${index}`}
@@ -80,10 +80,10 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, weekly_rankings, 
                                     </p>
                                 </td>
                                 <td colSpan={1}>
-                                    {weekly_rankings.find(w_r => w_r.id === bp)?.rank_ecr || '-'}
+                                    {allplayers[bp]?.rank_ecr || '-'}
                                 </td>
                                 <td colSpan={2}>
-                                    {weekly_rankings.find(w_r => w_r.id === bp)?.pos_rank || '-'}
+                                    {allplayers[bp]?.pos_rank || '-'}
                                 </td>
                             </tr>
                         )
@@ -118,10 +118,10 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, weekly_rankings, 
                                         </p>
                                     </td>
                                     <td colSpan={1}>
-                                        {weekly_rankings.find(w_r => w_r.id === bp)?.rank_ecr || '-'}
+                                        {allplayers[bp]?.rank_ecr || '-'}
                                     </td>
                                     <td colSpan={2}>
-                                        {weekly_rankings.find(w_r => w_r.id === bp)?.pos_rank || '-'}
+                                        {allplayers[bp]?.pos_rank || '-'}
                                     </td>
                                 </tr>
                             )

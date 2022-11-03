@@ -29,8 +29,7 @@ const Main = () => {
             const weekly_rankings = await axios.get('/weeklyrankings')
             const matched_rankings = await match_weekly_rankings(weekly_rankings.data, allplayers.data)
 
-            setStateAllPlayers(allplayers.data)
-            setStateWeeklyRankings(matched_rankings)
+            setStateAllPlayers(matched_rankings)
         }
         fetchData()
     }, [])
@@ -240,7 +239,6 @@ const Main = () => {
         <View
             isLoading={isLoading}
             stateAllPlayers={stateAllPlayers}
-            stateWeeklyRankings={stateWeeklyRankings}
             state_user={state_user}
             stateLeagues={stateLeagues}
             stateLeaguemates={stateLeaguemates}

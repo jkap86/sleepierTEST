@@ -103,9 +103,8 @@ const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRe
                                                                 <LineupBreakdown
                                                                     type={2}
                                                                     roster={league.userRoster}
-                                                                    lineup_check={getLineupCheck(league.roster_positions, league.userRoster, weekly_rankings, allplayers)}
+                                                                    lineup_check={getLineupCheck(league.roster_positions, league.userRoster, allplayers)}
                                                                     avatar={avatar}
-                                                                    weekly_rankings={weekly_rankings}
                                                                     allplayers={allplayers}
                                                                 />
                                                             </React.Suspense>

@@ -4,7 +4,7 @@ import React from "react";
 import { avatar } from "../misc_functions";
 const PlayerStartBench = React.lazy(() => import('./playerStartBench'))
 
-const PlayersRankProj = ({ playershares_display, playershares, page, setPage, leaguesVisible, setLeaguesVisible, rowRef, user_id, allplayers, weekly_rankings }) => {
+const PlayersRankProj = ({ playershares_display, playershares, page, setPage, leaguesVisible, setLeaguesVisible, rowRef, user_id, allplayers }) => {
 
     const header = (
         <>
@@ -52,11 +52,11 @@ const PlayersRankProj = ({ playershares_display, playershares, page, setPage, le
                                                         {allplayers[player.id]?.team}
                                                     </p>
                                                 </td>
-                                                <td colSpan={1}>{player.rank_ecr}</td>
-                                                <td colSpan={1}>{player.rank_min}</td>
-                                                <td colSpan={1}>{player.rank_max}</td>
-                                                <td colSpan={1}>{player.pos_rank}</td>
-                                                <td colSpan={2}>{player.player_opponent}</td>
+                                                <td colSpan={1}>{allplayers[player.id]?.rank_ecr || 999}</td>
+                                                <td colSpan={1}>{allplayers[player.id]?.rank_min || '-'}</td>
+                                                <td colSpan={1}>{allplayers[player.id]?.rank_max || '-'}</td>
+                                                <td colSpan={1}>{allplayers[player.id]?.pos_rank || '-'}</td>
+                                                <td colSpan={2}>{allplayers[player.id]?.player_opponent || '-'}</td>
                                                 <td colSpan={1}>
                                                     {
                                                         playershares.find(ps => ps.id === player.id)?.leagues_owned.filter(lo => lo.status === 'Starter').length
@@ -83,9 +83,7 @@ const PlayersRankProj = ({ playershares_display, playershares, page, setPage, le
                                                                     player_id={player.id}
                                                                     leagues_starting={playershares.find(ps => ps.id === player.id)?.leagues_owned.filter(lo => lo.status === 'Starter')}
                                                                     leagues_benched={playershares.find(ps => ps.id === player.id)?.leagues_owned.filter(lo => lo.status !== 'Starter')}
-                                                                    avatar={avatar}
                                                                     user_id={user_id}
-                                                                    weekly_rankings={weekly_rankings}
                                                                     player_rank={player.rank_ecr}
                                                                     allplayers={allplayers}
                                                                 />
