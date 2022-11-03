@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import React, { useEffect, useState, useRef } from "react";
 import axios from 'axios';
 import axiosRetry from "axios-retry"
-import { match_weekly_rankings } from './projections_stats';
+import { match_weekly_rankings, getNewRank } from './projections_stats';
 import View from "./view";
 
 const Main = () => {
@@ -235,26 +235,6 @@ const Main = () => {
         setStateLeagues([...leaguesSynced])
     }
 
-    const handleRankEdit = (player_id, newRank) => {
-        let rankings = stateAllPlayers
-        const prevRank = rankings[player_id].rank_ecr
-        Object.keys(rankings)
-            .map((player, index) => {
-                if (player === player_id) {
-                    rankings[player].rank_ecr = newRank
-                } else {
-                    if (rankings[player].rank_ecr > prevRank) {
-                        rankings[player].rank_ecr = rankings[player].rank_ecr - 1
-                    }
-                    if (rankings[player].rank_ecr >= newRank) {
-                        rankings[player].rank_ecr = rankings[player].rank_ecr + 1
-                    }
-                }
-            })
-
-        setStateAllPlayers(rankings)
-    }
-
     return <>
         <View
             isLoading={isLoading}
@@ -264,7 +244,7 @@ const Main = () => {
             stateLeaguemates={stateLeaguemates}
             statePlayerShares={statePlayerShares}
             syncLeague={syncLeague}
-            sendRankEdit={handleRankEdit}
+            sendRankEdit={setStateAllPlayers}
         />
     </>
 }

@@ -1,34 +1,102 @@
 
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { avatar } from "../misc_functions";
+import { getNewRank } from "../projections_stats";
 const PlayerStartBench = React.lazy(() => import('./playerStartBench'))
 
 const PlayersRankProj = ({ playershares_display, page, setPage, leaguesVisible, setLeaguesVisible, rowRef, user_id, allplayers, sendRankEdit }) => {
     const [edit, setEdit] = useState(false)
-    const [inputDefaultValue, setInputDefaultValue] = useState(true)
+    const [rankingEdits, setRankingEdits] = useState({})
+    const [rankings, setRankings] = useState({})
 
-    const handleEditRank = (e, player_id) => {
-        const newRank = parseInt(e.target.value)
-        if (newRank > 0 && newRank <= 999) {
-            sendRankEdit(player_id, newRank)
-        }
-        setInputDefaultValue(prevState => !prevState)
+    useEffect(() => {
+        setRankings(allplayers)
+    }, [allplayers])
+
+    const handleRankChange = (e, player_id) => {
+        let r = rankings
+        const prevRank = rankings[player_id].rank_ecr
+        const newRank = e.target.value
+        Object.keys(rankings)
+            .map((player, index) => {
+                let incrementedRank = rankings[player].rank_ecr
+                incrementedRank = getNewRank(rankings, prevRank, newRank, player_id, player, incrementedRank)
+                rankings[player].rank_ecr = incrementedRank
+            })
+        setRankings({ ...r })
     }
 
+    const handleRankSave = () => {
+        const r = rankings
+        sendRankEdit(r)
+        setEdit(false)
+    }
 
+    /*
+    const saveRankEdits = () => {
+        let changes = rankingEdits
+        sendRankEdit(changes)
+        setEdit(false)
+        setRankingEdits({})
+    }
+
+    const handleEditRank = (e, player_id) => {
+        let changes = rankingEdits
+        const newRank = parseInt(e.target.value)
+        const prevRank = allplayers[player_id].rank_ecr
+        if (newRank > 0 && newRank <= 999) {
+            changes[player_id] = {
+                prevRank: prevRank,
+                newRank: newRank
+            }
+        }
+        setRankingEdits(changes)
+    }
+
+    const previewRank = (player) => {
+        const changes = rankingEdits
+        let incrementedRank = allplayers[player].rank_ecr
+        Object.keys(changes).map(change_id => {
+            incrementedRank = getNewRank(allplayers, changes[change_id].prevRank, changes[change_id].newRank, change_id, player, incrementedRank)
+        })
+        return incrementedRank
+
+    }
+*/
     const header = (
         <>
             <tr className="main_header double">
                 <th colSpan={3} rowSpan={2}>Player</th>
                 <th colSpan={2}>
-                    Rank&nbsp;
-                    <button
-                        className={'clickable'}
-                        onClick={() => setEdit(prevState => !prevState)}
-                    >
-                        Edit
-                    </button>
+                    {
+                        edit ?
+                            <>
+                                <i
+                                    onClick={() => setEdit(false)}
+                                    className={'fa fa-times clickable left'}
+                                >
+                                </i>
+                            </>
+                            : null
+                    }
+                    Rank
+                    {
+                        edit ?
+                            <>
+                                <i
+                                    onClick={() => handleRankSave()}
+                                    className={'fa fa-save clickable right'}
+                                >
+                                </i>
+                            </>
+                            :
+                            <i
+                                onClick={() => setEdit(true)}
+                                className={'fa fa-edit clickable right'}
+                            >
+                            </i>
+                    }
                 </th>
                 <th colSpan={2} rowSpan={2}>Opp</th>
                 <th colSpan={1} rowSpan={2}>Start</th>
@@ -73,10 +141,9 @@ const PlayersRankProj = ({ playershares_display, page, setPage, leaguesVisible, 
                                                     {
                                                         edit ?
                                                             <input
-                                                                key={inputDefaultValue}
                                                                 className={'editRank'}
-                                                                defaultValue={allplayers[player.id]?.rank_ecr || 999}
-                                                                onBlur={(e) => handleEditRank(e, player.id)}
+                                                                value={rankings[player.id]?.rank_ecr}
+                                                                onChange={(e) => handleRankChange(e, player.id)}
                                                             />
                                                             :
                                                             allplayers[player.id]?.rank_ecr || 999

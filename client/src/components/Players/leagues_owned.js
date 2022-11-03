@@ -25,7 +25,7 @@ const Leagues_Owned = ({ leagues_owned, type, avatar }) => {
                     >
                         Status
                         <i
-                            className={'fa fa-filter'}
+                            className={'fa fa-filter right'}
                         >
                             <select
                                 className="invisible"

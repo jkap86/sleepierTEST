@@ -91,6 +91,14 @@ input.editRank {
   background-color: var(--color2);
 }
 
+i.left {
+  float: left;
+}
+
+i.right {
+  float: right;
+}
+
 /* Hompage */
 div.home_wrapper {
   width: 100%;

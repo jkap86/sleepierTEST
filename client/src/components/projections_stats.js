@@ -44,6 +44,20 @@ export const match_weekly_rankings = async (weekly_rankings, allplayers) => {
     return (allplayers)
 }
 
+export const getNewRank = (rankings, prevRank, newRank, player_id, playerToIncrement, playerToIncrementRank) => {
+    let incrementedRank = playerToIncrementRank
+    if (playerToIncrement === player_id) {
+        incrementedRank = newRank
+    } else {
+        if (rankings[playerToIncrement].rank_ecr > prevRank) {
+            incrementedRank = rankings[playerToIncrement].rank_ecr - 1
+        }
+        if (incrementedRank >= newRank) {
+            incrementedRank = incrementedRank + 1
+        }
+    }
+    return incrementedRank
+}
 
 export const getLineupCheck = (roster_positions, roster, allplayers) => {
     const position_map = {
