@@ -12,7 +12,6 @@ const PlayersRankProj = ({ playershares_display, page, setPage, leaguesVisible, 
 
     useEffect(() => {
         setRankings(allplayers)
-        console.log(allplayers)
     }, [allplayers])
 
     const handleRankChange = (e, player_id) => {

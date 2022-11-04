@@ -1,14 +1,9 @@
 
 export const match_weekly_rankings = async (weekly_rankings, allplayers) => {
-    const activePlayers = Object.keys(allplayers)
-        .filter(x =>
-            (['QB', 'RB', 'FB', 'WR', 'TE'].includes(allplayers[x].position))
-        )
-
-
-    Object.keys(weekly_rankings).map(fp_id => {
+    console.log(allplayers)
+    weekly_rankings.map(fp_id => {
         const searchName = (
-            weekly_rankings[fp_id].player_name
+            fp_id.player_name
                 .split(' ')
                 .filter(x => !['V', 'III', 'II', 'Sr.', 'Jr.'].includes(x))
                 .join('')
@@ -16,26 +11,36 @@ export const match_weekly_rankings = async (weekly_rankings, allplayers) => {
                 .replace('-', '')
                 .replace('.', '')
                 .toLowerCase()
+                .replace(/[^a-zA-Z ]/g, "")
+                .trim()
         )
-        const match_id = activePlayers.find(x =>
-            (allplayers[x].yahoo_id === parseInt(weekly_rankings[fp_id].player_yahoo_id)) ||
+        const match_id = Object.keys(allplayers).find(x =>
+            (
+                allplayers[x].yahoo_id === parseInt(fp_id.player_yahoo_id) &&
+                allplayers[x].search_full_name.replace(/[^a-zA-Z ]/g, "").trim() === searchName
+            )
+            ||
             (
                 (
-                    (allplayers[x].position === weekly_rankings[fp_id].player_position_id ||
-                        ['RB', 'TE'].includes(weekly_rankings[fp_id].player_position_id) && allplayers[x].position === 'FB')
+                    (allplayers[x].position === fp_id.player_position_id ||
+                        ['RB', 'TE'].includes(fp_id.player_position_id) && allplayers[x].position === 'FB')
                 )
                 &&
                 (allplayers[x].search_full_name.trim() === searchName)
                 &&
                 (
-                    allplayers[x].team === weekly_rankings[fp_id].player_team_id ||
-                    allplayers[x].team?.slice(0, 2) === weekly_rankings[fp_id].player_team_id.slice(0, 2)
+                    allplayers[x].team === fp_id.player_team_id ||
+                    allplayers[x].team?.slice(0, 2) === fp_id.player_team_id.slice(0, 2)
                 )
             )
         )
-        allplayers[match_id] = {
-            ...allplayers[match_id],
-            ...weekly_rankings[fp_id]
+        if (match_id) {
+            allplayers[match_id] = {
+                ...allplayers[match_id],
+                ...fp_id
+            }
+        } else {
+            console.log(`${fp_id.player_name} NOT MATCHED!!!`)
         }
     })
     Object.keys(allplayers).filter(id => !allplayers[id].rank_ecr).map(id => {
