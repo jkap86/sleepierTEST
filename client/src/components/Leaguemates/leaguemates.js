@@ -182,14 +182,13 @@ const Leaguemates = (props) => {
                 )}
             </ol>
         </div>
-        <div className="scrollable">
-            <table className="main">
-                <thead className="main">
-                    {header}
-                </thead>
-                {display}
-            </table>
-        </div>
+        <div className={`nav1`}></div>
+        <table className="main">
+            <thead className="main">
+                {header}
+            </thead>
+            {display}
+        </table>
     </>
 }
 

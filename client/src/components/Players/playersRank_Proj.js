@@ -60,7 +60,7 @@ const PlayersRankProj = ({ playershares_display, page, setPage, leaguesVisible, 
                 >
                     <i
                         onClick={() => exportRankings()}
-                        className={'fa fa-file clickable left'}
+                        className={'fa fa-download clickable left'}
                     >
                     </i>
                     Player
@@ -71,7 +71,7 @@ const PlayersRankProj = ({ playershares_display, page, setPage, leaguesVisible, 
                             <>
                                 <i
                                     onClick={() => setEdit(false)}
-                                    className={'fa fa-times clickable left'}
+                                    className={'fa fa-trash clickable left'}
                                 >
                                 </i>
                             </>
@@ -143,7 +143,7 @@ const PlayersRankProj = ({ playershares_display, page, setPage, leaguesVisible, 
                                                                 onChange={(e) => handleRankChange(e, player.id)}
                                                             />
                                                             :
-                                                            allplayers[player.id]?.rank_ecr || 999
+                                                            allplayers[player.id]?.rank_ecr === 1000 ? 'BYE' : allplayers[player.id]?.rank_ecr || 999
                                                     }
                                                 </td>
                                                 <td colSpan={1}>

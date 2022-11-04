@@ -1,6 +1,6 @@
 
 export const match_weekly_rankings = async (weekly_rankings, allplayers) => {
-    console.log(allplayers)
+    const teams_playing = Array.from(new Set(weekly_rankings.map(w_r => w_r.player_team_id)))
     weekly_rankings.map(fp_id => {
         const searchName = (
             fp_id.player_name
@@ -44,7 +44,7 @@ export const match_weekly_rankings = async (weekly_rankings, allplayers) => {
         }
     })
     Object.keys(allplayers).filter(id => !allplayers[id].rank_ecr).map(id => {
-        allplayers[id].rank_ecr = 999
+        allplayers[id].rank_ecr = !allplayers[id].team || teams_playing.includes(allplayers[id].team) ? 999 : 1000
     })
     return (allplayers)
 }
@@ -113,15 +113,22 @@ export const getLineupCheck = (roster_positions, roster, allplayers) => {
             position_map[slot].includes(allplayers[p]?.position) &&
             (allplayers[p]?.rank_ecr || 999) < (cur_rank || 999)
         )
+        const slot_abbrev = slot
+            .replace('SUPER_FLEX', 'SF')
+            .replace('FLEX', 'W/R/T')
+            .replace('WRRB_FLEX', 'W/R')
+            .replace('REC_FLEX', 'W/T')
 
         lineup_check.push({
             index: index,
-            slot: slot,
+            slot: slot_abbrev,
             cur_id: cur_id,
+            cur_pos: allplayers[cur_id]?.position,
             cur_rank: cur_rank,
             cur_pos_rank: cur_pos_rank,
             subs: subs,
-            subs_taxi: subs_taxi
+            subs_taxi: subs_taxi,
+            isInOptimal: optimal_lineup.includes(cur_id)
         })
     })
 

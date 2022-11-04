@@ -68,12 +68,12 @@ const PlayerShares = ({ player_shares, allplayers, user_id, sendRankEdit }) => {
     let playershares_display = playershares
     playershares_display = playershares_display.filter(x =>
         (filterTeam === 'All' || allplayers[x.id]?.team === filterTeam) &&
-        (searched.trim().length === 0 || allplayers[x.id]?.full_name === searched)
+        ((searched?.trim()?.length || 0) === 0 || allplayers[x.id]?.full_name === searched)
     )
     if (displayRankings) {
         playershares_display = playershares_display
             .filter(ps => ['QB', 'RB', 'FB', 'WR', 'TE'].includes(allplayers[ps.id]?.position))
-            .sort((a, b) => (allplayers[a.id]?.rank_ecr || 999) - (allplayers[b.id]?.rank_ecr || 999))
+            .sort((a, b) => (parseInt(allplayers[a.id]?.rank_ecr) || 999) - (parseInt(allplayers[b.id]?.rank_ecr) || 999))
     }
 
     const display = displayRankings ?
@@ -107,18 +107,6 @@ const PlayerShares = ({ player_shares, allplayers, user_id, sendRankEdit }) => {
     ]
 
     return <>
-        <button
-            className={displayRankings ? 'active clickable' : 'clickable'}
-            onClick={() => setDispayRankings(true)}
-        >
-            Rankings
-        </button>
-        <button
-            className={!displayRankings ? 'active clickable' : 'clickable'}
-            onClick={() => setDispayRankings(false)}
-        >
-            Ownership
-        </button>
         <span className="team">
             <label>
                 Team
@@ -139,6 +127,17 @@ const PlayerShares = ({ player_shares, allplayers, user_id, sendRankEdit }) => {
                 sendSearched={(data) => setSearched(data)}
             />
         </React.Suspense>
+        <span className="team">
+            <label>
+                Position
+            </label>
+            <select>
+                <option>QB</option>
+                <option>RB</option>
+                <option>WR</option>
+                <option>TE</option>
+            </select>
+        </span>
         <div className="page_numbers_wrapper">
             <ol className="page_numbers">
                 {Array.from(Array(Math.ceil(playershares_display.length / 25)).keys()).map(key => key + 1).map(page_number =>
@@ -147,6 +146,20 @@ const PlayerShares = ({ player_shares, allplayers, user_id, sendRankEdit }) => {
                     </li>
                 )}
             </ol>
+        </div>
+        <div className={`nav1`}>
+            <button
+                className={displayRankings ? 'active clickable' : 'clickable'}
+                onClick={() => setDispayRankings(true)}
+            >
+                Rankings
+            </button>
+            <button
+                className={!displayRankings ? 'active clickable' : 'clickable'}
+                onClick={() => setDispayRankings(false)}
+            >
+                Ownership
+            </button>
         </div>
         <React.Suspense fallback={<>...</>}>
             {display}

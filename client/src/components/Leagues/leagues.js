@@ -9,7 +9,7 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
     const [searched, setSearched] = useState('')
     const [page, setPage] = useState(1)
     const [rostersVisible, setRostersVisible] = useState('')
-    const [lineupCheck, setLineupCheck] = useState(false);
+    const [lineupCheck, setLineupCheck] = useState('Ranks');
     const rowRef = useRef(null)
     const sortedByRef = useRef({
         by: 'default',
@@ -104,11 +104,16 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
 
     useEffect(() => {
         let pl = prop_leagues.map(l => {
+            const league_check = getLineupCheck(l.roster_positions, l.userRoster, allplayers)
+            const empty_slots = l.userRoster.starters?.filter(s => s === '0').length
+            const bye_slots = league_check.filter(slot => slot.cur_rank === 1000).length
             return {
                 ...l,
-                empty_slots: l.userRoster.starters?.filter(s => s === '0').length,
-                so_slots: getLineupCheck(l.roster_positions, l.userRoster, allplayers)
-                    .filter(slot => slot.subs.length > 0).length
+                empty_slots: empty_slots + bye_slots,
+                so_slots: league_check.filter(slot => !slot.isInOptimal).length,
+                qb_in_sf: league_check
+                    .filter(slot => slot.slot === 'SF' && slot.cur_pos !== 'QB').length === 0,
+                optimal_lineup: league_check.filter(slot => !slot.isInOptimal).length === 0
             }
         })
         sortLeagues(sortedByRef.current.by, pl, true)
@@ -118,7 +123,7 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
         leagues.filter(x => x.name.trim() === searched.trim())
 
 
-    const display = lineupCheck ?
+    const display = lineupCheck === 'Lineup Check' ?
         <LeaguesLineupCheck
             sortLeagues={sortLeagues}
             leagues_display={leagues_display}
@@ -131,26 +136,21 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
             syncLeague={syncLeague}
             user_id={user_id}
         />
-        :
-        <LeaguesStandings
-            sortLeagues={sortLeagues}
-            leagues_display={leagues_display}
-            page={page}
-            setPage={setPage}
-            rowRef={rowRef}
-            rostersVisible={rostersVisible}
-            setRostersVisible={setRostersVisible}
-            user_id={user_id}
-            allplayers={allplayers}
-        />
+        : lineupCheck === 'Ranks' ?
+            <LeaguesStandings
+                sortLeagues={sortLeagues}
+                leagues_display={leagues_display}
+                page={page}
+                setPage={setPage}
+                rowRef={rowRef}
+                rostersVisible={rostersVisible}
+                setRostersVisible={setRostersVisible}
+                user_id={user_id}
+                allplayers={allplayers}
+            />
+            : null
 
     return <>
-        <button
-            className={lineupCheck ? 'active clickable' : 'clickable'}
-            onClick={() => setLineupCheck(prevState => !prevState)}
-        >
-            Lineup Check
-        </button>
         <React.Suspense fallback={<>...</>}>
             <Search
                 list={leagues.map(league => league.name)}
@@ -166,6 +166,20 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
                     </li>
                 )}
             </ol>
+        </div>
+        <div className={`nav1`}>
+            <button
+                className={lineupCheck === 'Ranks' ? 'active clickable' : 'clickable'}
+                onClick={() => setLineupCheck('Ranks')}
+            >
+                Ranks
+            </button>
+            <button
+                className={lineupCheck === 'Lineup Check' ? 'active clickable' : 'clickable'}
+                onClick={() => setLineupCheck('Lineup Check')}
+            >
+                Lineup Check
+            </button>
         </div>
         {display}
     </>

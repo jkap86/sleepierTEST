@@ -91,6 +91,18 @@ input.editRank {
   background-color: var(--color2);
 }
 
+i.green {
+  color: green;
+  font-size: 150%;
+  filter: brightness(2);
+}
+
+i.red {
+  color: red;
+  font-size: 150%;
+  filter: brightness(2);
+}
+
 i.left {
   float: left;
 }
@@ -215,7 +227,7 @@ div#view div.navbar {
   border-radius: 1rem;
 }
 
-div#view div.navbar>button {
+button {
   font-size: 2rem;
   background-color: transparent;
   color: var(--color4);
@@ -223,8 +235,7 @@ div#view div.navbar>button {
   border: 0.75rem ridge transparent;
 }
 
-div#view div.navbar>button.active,
-div#view div.switch_wrapper>div.switch>button.active {
+button.active {
   border: 0.5rem ridge var(--color2);
   color: var(--color2);
   background-color: var(--color6);
@@ -292,21 +303,6 @@ div.tab {
   padding-bottom: 25vh;
 }
 
-div.tab>input {
-  -webkit-appearance: none;
-  background-color: var(--color2);
-  font-weight: 900;
-  border: 1rem ridge var(--color6);
-  box-shadow: inset 0 0 0.5em var(--color1), 0 0 1rem var(--color5);
-  padding: 0.25rem 1rem;
-  font-size: 2rem;
-  display: inline-block;
-  margin: auto;
-  color: var(--color1);
-  position: relative;
-  z-index: 10;
-  height: 4rem;
-}
 
 div.tab>button {
   font-size: 2rem;
@@ -318,30 +314,54 @@ div.tab>button {
   margin: auto 0.5rem;
 }
 
+div.search_container {
+  width: 30%;
+  position: relative;
+  margin: auto;
+  display: inline-flex;
+  justify-content: center;
+}
+
+input.search {
+  width: 100%;
+  font-size: 2rem;
+  padding: .5rem 1rem;
+  background-color: var(--color2);
+  border: 1rem ridge var(--color6);
+  box-sizing: border-box;
+}
+
+button.clear {
+  position: absolute;
+  z-index: 11;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto 1rem;
+  background-color: var(--color8);
+  border-radius: 50%;
+  padding: 0;
+  height: 3rem;
+  width: 3rem;
+  border: none;
+  color: white;
+}
+
 span.team {
   display: inline-flex;
   flex-direction: column;
   width: 7.5rem;
-  margin-top: 1rem;
   font-size: 2rem;
   vertical-align: top;
   border: 0.25rem ridge var(--color4);
   background-color: var(--color3);
   color: var(--color4);
+  box-sizing: border-box;
 }
 
-div.tab>button.active {
-  color: var(--color2);
-  border-color: var(--color2);
-}
-
-div.tab>button.clear {
-  -webkit-appearance: none;
-  box-shadow: 0 0 1rem var(--color5);
-  border-radius: 10rem;
-  border: 0.25rem solid var(--color8);
-  background-color: var(--color7);
-  color: white;
+span.team>select {
+  font-size: 2rem;
+  text-align: center;
 }
 
 div.page_numbers_wrapper {
@@ -433,12 +453,14 @@ p.red {
   color: red;
   filter: brightness(2);
   margin: 0;
+  font-weight: 900;
 }
 
 p.green {
   color: green;
   filter: brightness(2);
   margin: 0;
+  font-weight: 900;
 }
 
 th.filter {
@@ -469,7 +491,7 @@ table.main {
 
 table.main thead.main {
   position: sticky;
-  top: 5rem;
+  top: 10rem;
   z-index: 9;
 }
 
@@ -509,7 +531,7 @@ table.main tbody.active+tbody {
 table.main tr.main_row.active {
   color: var(--color2);
   position: sticky;
-  top: 10rem;
+  top: 15rem;
   z-index: 8;
   filter: drop-shadow(0 0 1rem var(--color2));
 }
@@ -519,9 +541,23 @@ table.main tr.main_row.active td {
   padding: 0;
 }
 
+div.nav1 {
+  position: sticky;
+  z-index: 10;
+  height: 5rem;
+  top: 5rem;
+  background: var(--color1);
+  filter: drop-shadow(0 0 1rem var(--color2));
+  display: flex;
+  justify-content: center;
+  max-width: 1500px;
+  width: 100%;
+  margin: auto;
+}
+
 table.main div.nav2 {
   position: sticky;
-  top: 15.25rem;
+  top: 20.25rem;
   z-index: 7;
   background-color: var(--color1);
   filter: drop-shadow(0 0 1rem var(--color2));
@@ -683,7 +719,7 @@ table.table2 {
 
 table.table2 thead {
   position: sticky;
-  top: 20.25rem;
+  top: 25.25rem;
   z-index: 6;
   border-spacing: 0;
 }
@@ -695,7 +731,7 @@ table.table2 tr {
 table.table2 tr.row2.active {
   color: var(--color2);
   position: sticky;
-  top: 25rem;
+  top: 30rem;
   z-index: 5;
   filter: drop-shadow(0 0 1rem var(--color2));
   background-color: var(--color2);

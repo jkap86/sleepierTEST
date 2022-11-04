@@ -13,7 +13,7 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers }) => 
                 onClick={() => setActiveSlot(prevState => slot === prevState ? null : slot)}
             >
                 <td colSpan={1}
-                    className={slot.subs.length > 0 ? 'sub' : null}
+                    className={!slot.isInOptimal > 0 ? 'sub' : null}
                 >
                     {slot.slot}
                 </td>
@@ -26,7 +26,7 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers }) => 
                     </p>
                 </td>
                 <td>
-                    {slot.cur_rank}
+                    {slot.cur_rank === 1000 ? 'BYE' : slot.cur_rank}
                 </td>
                 <td>
                     {slot.cur_pos_rank}
@@ -80,7 +80,7 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers }) => 
                                     </p>
                                 </td>
                                 <td colSpan={1}>
-                                    {allplayers[bp]?.rank_ecr || '-'}
+                                    {allplayers[bp]?.rank_ecr === 1000 ? 'BYE' : allplayers[bp]?.rank_ecr || 999}
                                 </td>
                                 <td colSpan={2}>
                                     {allplayers[bp]?.pos_rank || '-'}

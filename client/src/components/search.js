@@ -9,27 +9,33 @@ const Search = ({ id, sendSearched, placeholder, list }) => {
     }
 
     return <>
-        <input
-            onChange={handleSearch}
-            id={id === undefined ? null : id}
-            list={placeholder}
-            placeholder={placeholder}
-            type="text"
-            value={searched}
-        />
-        <datalist id={placeholder}>
-            {list.sort((a, b) => a > b ? 1 : -1).map((i, index) =>
-                <option key={index}>{i}</option>
-            )}
-        </datalist>
-        <button
-            value={''}
-            onClick={handleSearch}
-            className="clear"
-            type="reset"
-        >
-            Clear
-        </button>
+        <div className={'search_container'}>
+            <input
+                className={'search'}
+                onChange={handleSearch}
+                id={id === undefined ? null : id}
+                list={placeholder}
+                placeholder={placeholder}
+                type="text"
+                value={searched}
+            />
+            {
+                searched === '' ? null :
+                    <button
+                        type="reset"
+                        onClick={handleSearch}
+                        value={''}
+                        className={'clear clickable'}
+                    >
+                        x
+                    </button>
+            }
+            <datalist id={placeholder}>
+                {list.sort((a, b) => a > b ? 1 : -1).map((i, index) =>
+                    <option key={index}>{i}</option>
+                )}
+            </datalist>
+        </div>
     </>
 }
 
