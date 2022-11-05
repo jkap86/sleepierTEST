@@ -67,7 +67,7 @@ const PlayerShares = ({ player_shares, allplayers, user_id, sendRankEdit }) => {
     let playershares_display = playershares
     playershares_display = playershares_display.filter(x =>
         (filterTeam === 'All' || allplayers[x.id]?.team === filterTeam) &&
-        (filterPosition === allplayers[x.id]?.position || filterPosition.split('/').includes(allplayers[x.id]?.position.slice(0, 1))) &&
+        (filterPosition === allplayers[x.id]?.position || filterPosition.split('/').includes(allplayers[x.id]?.position?.slice(0, 1))) &&
         ((searched?.trim()?.length || 0) === 0 || allplayers[x.id]?.full_name === searched)
     )
 
