@@ -64,7 +64,7 @@ export const getNewRank = (rankings, prevRank, newRank, player_id, playerToIncre
     return incrementedRank
 }
 
-export const getLineupCheck = (roster_positions, roster, allplayers) => {
+export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi, rankMargin) => {
     const position_map = {
         'QB': ['QB'],
         'RB': ['RB', 'FB'],
@@ -79,12 +79,22 @@ export const getLineupCheck = (roster_positions, roster, allplayers) => {
     const starting_slots = roster_positions.filter(x => Object.keys(position_map).includes(x))
 
     let player_ranks = roster.players.map(player => {
+        let rank;
+        if (roster.starters?.includes(player)) {
+            rank = Math.max(((allplayers[player]?.rank_ecr || 999) - rankMargin), 1)
+        } else {
+            rank = allplayers[player]?.rank_ecr || 999
+        }
         return {
             id: player,
-            rank: allplayers[player]?.rank_ecr,
+            rank: rank,
             rank_pos: allplayers[player]?.pos_rank
         }
     })
+
+    if (includeTaxi < 0) {
+        player_ranks = player_ranks.filter(player => !roster.taxi?.includes(player.id))
+    }
 
     let optimal_lineup = []
     starting_slots.map((slot, index) => {
@@ -101,16 +111,17 @@ export const getLineupCheck = (roster_positions, roster, allplayers) => {
     starting_slots.map((slot, index) => {
         const cur_id = roster.starters[index]
         const cur_matched = allplayers[cur_id]
-        const cur_rank = cur_matched?.rank_ecr
+        const cur_rank = cur_matched?.rank_ecr || 999
+        const cur_rank_margin = Math.max((cur_rank - rankMargin), 1)
         const cur_pos_rank = cur_matched?.pos_rank
         const subs = roster.players.filter(p =>
             !roster.starters.includes(p) && !roster.taxi?.includes(p) &&
             position_map[slot].includes(allplayers[p]?.position) &&
-            (allplayers[p]?.rank_ecr || 999) < (cur_rank || 999)
+            (allplayers[p]?.rank_ecr || 999) < (cur_rank_margin || 999)
         )
         const subs_taxi = roster.taxi?.filter(p =>
             position_map[slot].includes(allplayers[p]?.position) &&
-            (allplayers[p]?.rank_ecr || 999) < (cur_rank || 999)
+            (allplayers[p]?.rank_ecr || 999) < (cur_rank_margin || 999)
         )
         const slot_abbrev = slot
             .replace('SUPER_FLEX', 'SF')
@@ -127,7 +138,7 @@ export const getLineupCheck = (roster_positions, roster, allplayers) => {
             cur_rank: cur_rank,
             cur_pos_rank: cur_pos_rank,
             subs: subs,
-            subs_taxi: subs_taxi,
+            subs_taxi: includeTaxi > 0 ? subs_taxi : [],
             isInOptimal: optimal_lineup.includes(cur_id)
         })
     })

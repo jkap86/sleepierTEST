@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { avatar } from "../misc_functions";
-import { getLineupCheck } from '../projections_stats';
 import throttle from 'lodash.throttle';
 const LineupBreakdown = React.lazy(() => import('./lineupBreakdown'));
 
@@ -137,7 +136,7 @@ const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRe
                                                                 <LineupBreakdown
                                                                     type={2}
                                                                     roster={league.userRoster}
-                                                                    lineup_check={getLineupCheck(league.roster_positions, league.userRoster, allplayers, options.includeTaxi, options.rankMargin)}
+                                                                    lineup_check={league.lineup_check}
                                                                     avatar={avatar}
                                                                     allplayers={allplayers}
                                                                 />

@@ -18,7 +18,7 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
     const [includeTaxi, setIncludeTaxi] = useState(1)
     const [rankMargin, setRankMargin] = useState(0)
 
-    console.log(typeof (includeTaxi))
+    console.log(typeof (rankMargin))
 
     const sortLeagues = (sort_by, prop_leagues, initial = false) => {
         let l = prop_leagues ? prop_leagues : leagues
@@ -115,10 +115,11 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
                 ...l,
                 empty_slots: empty_slots.length + bye_slots.length,
                 so_slots: league_check
-                    .filter(slot => !slot.isInOptimal && !empty_slots.includes(slot.cur_id) && !bye_slots.includes(slot.cur_id)).length,
+                    .filter(slot => (!slot.isInOptimal || (slot.subs.length + slot.subs_taxi?.length) > 0) && !empty_slots.includes(slot.cur_id) && !bye_slots.includes(slot.cur_id)).length,
                 qb_in_sf: league_check
                     .filter(slot => slot.slot === 'SF' && slot.cur_pos !== 'QB').length === 0,
-                optimal_lineup: league_check.filter(slot => !slot.isInOptimal).length === 0
+                optimal_lineup: league_check.filter(slot => !slot.isInOptimal).length === 0,
+                lineup_check: league_check
             }
         })
         sortLeagues(sortedByRef.current.by, pl, true)
@@ -194,15 +195,21 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
             <div className={'lineupcheck_options'} hidden={lineupCheck !== 'Lineup Check'}>
                 <label>
                     Include Taxi
-                    <select>
+                    <select
+                        value={includeTaxi}
+                        onChange={(e) => setIncludeTaxi(e.target.value)}
+                    >
                         <option value={1}>True</option>
                         <option value={-1}>False</option>
                     </select>
                 </label>
                 <label>
                     Rank Margin
-                    <select>
-                        {Array.from(Array(25).keys()).map(key =>
+                    <select
+                        value={rankMargin}
+                        onChange={(e) => setRankMargin(e.target.value)}
+                    >
+                        {Array.from(Array(51).keys()).map(key =>
                             <option key={key}>{key}</option>
                         )}
                     </select>
