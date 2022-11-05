@@ -22,6 +22,8 @@ const Main = () => {
         retryDelay: axiosRetry.exponentialDelay
     })
 
+
+
     useEffect(() => {
         const fetchData = async () => {
             const allplayers = await axios.get('/allplayers')
@@ -205,9 +207,12 @@ const Main = () => {
                     username: params.username
                 }
             })
-            setState_User(user.data)
-            if (user.data !== 'Invalid') {
+
+            if (user.data?.user_id) {
+                setState_User(user.data)
                 fetchLeagues(user.data)
+            } else {
+                setState_User('Invalid')
             }
         }
         fetchUser()
