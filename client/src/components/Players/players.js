@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 const Search = React.lazy(() => import('../search'));
 const PlayersOwnership = React.lazy(() => import('./playersOwnership'));
-const PlayersRankProj = React.lazy(() => import('./playersRank_Proj'));
 
 
 const PlayerShares = ({ player_shares, allplayers, user_id, sendRankEdit }) => {
@@ -10,7 +9,6 @@ const PlayerShares = ({ player_shares, allplayers, user_id, sendRankEdit }) => {
     const [leaguesVisible, setLeaguesVisible] = useState('')
     const [page, setPage] = useState(1)
     const [filterTeam, setFilterTeam] = useState('All')
-    const [displayRankings, setDispayRankings] = useState(false)
     const rowRef = useRef(null)
     const sortedByRef = useRef({
         by: 'default',
@@ -70,25 +68,8 @@ const PlayerShares = ({ player_shares, allplayers, user_id, sendRankEdit }) => {
         (filterTeam === 'All' || allplayers[x.id]?.team === filterTeam) &&
         ((searched?.trim()?.length || 0) === 0 || allplayers[x.id]?.full_name === searched)
     )
-    if (displayRankings) {
-        playershares_display = playershares_display
-            .filter(ps => ['QB', 'RB', 'FB', 'WR', 'TE'].includes(allplayers[ps.id]?.position))
-            .sort((a, b) => (parseInt(allplayers[a.id]?.rank_ecr) || 999) - (parseInt(allplayers[b.id]?.rank_ecr) || 999))
-    }
 
-    const display = displayRankings ?
-        <PlayersRankProj
-            playershares_display={playershares_display}
-            page={page}
-            setPage={setPage}
-            leaguesVisible={leaguesVisible}
-            setLeaguesVisible={setLeaguesVisible}
-            rowRef={rowRef}
-            user_id={user_id}
-            allplayers={allplayers}
-            sendRankEdit={sendRankEdit}
-        />
-        :
+    const display =
         <PlayersOwnership
             playershares_display={playershares_display}
             page={page}
@@ -149,14 +130,7 @@ const PlayerShares = ({ player_shares, allplayers, user_id, sendRankEdit }) => {
         </div>
         <div className={`nav1`}>
             <button
-                className={displayRankings ? 'active clickable' : 'clickable'}
-                onClick={() => setDispayRankings(true)}
-            >
-                Rankings
-            </button>
-            <button
-                className={!displayRankings ? 'active clickable' : 'clickable'}
-                onClick={() => setDispayRankings(false)}
+                className={'active clickable'}
             >
                 Ownership
             </button>

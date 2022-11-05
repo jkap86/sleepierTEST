@@ -185,6 +185,21 @@ div#view>.home {
   z-index: 9999;
 }
 
+div#view>i.home {
+  right: 1rem;
+  left: unset;
+  font-size: 3rem;
+  padding: .5rem;
+  border-radius: 1rem;
+  background-color: var(--color1);
+  filter: drop-shadow(0 0 .5rem white);
+}
+
+div#view>i.home.active {
+  color: var(--color2);
+  filter: drop-shadow(0 0 .5rem var(--color2));
+}
+
 div#view div.heading>h1 {
   position: relative;
   margin-top: 2vh;
