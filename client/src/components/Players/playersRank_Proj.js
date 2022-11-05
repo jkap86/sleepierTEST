@@ -28,6 +28,7 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
         const newRank = e.target.value
         Object.keys(rankings)
             .map((player, index) => {
+                rankings[player].original_rank = rankings[player].original_rank || rankings[player].rank_ecr
                 let incrementedRank = rankings[player].rank_ecr
                 incrementedRank = getNewRank(rankings, prevRank, newRank, player_id, player, incrementedRank)
                 rankings[player].rank_ecr = incrementedRank
@@ -66,9 +67,11 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
         'NE', 'NO', 'NYG', 'NYJ', 'PHI', 'PIT', 'SF', 'SEA', 'TB', 'TEN', 'WAS'
     ]
 
+    const week = rankings[Object.keys(rankings)[0]]?.week
+
     const header = (
         <>
-            <tr className="main_header double">
+            <tr className="main_header single">
                 <th colSpan={3}
                     rowSpan={2}
                 >
@@ -79,13 +82,13 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
                     </i>
                     Player
                 </th>
-                <th colSpan={4}>
-                    Weekly Rankings
+                <th colSpan={4 + (edit ? 1 : 0)}>
+                    {`Week ${week} Rankings`}
                 </th>
                 <th colSpan={2} rowSpan={2}>Opp</th>
             </tr>
             <tr className="main_header double">
-                <th colSpan={1}>
+                <th colSpan={1 + (edit ? 1 : 0)}>
                     {
                         edit ?
                             <>
@@ -136,7 +139,7 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
                             key={`${player.id}_${index}`}
                         >
                             <tr>
-                                <td colSpan={9}>
+                                <td colSpan={9 + (edit ? 1 : 0)}>
                                     <table className={`table${1}`}>
                                         <tbody>
                                             <tr
@@ -155,14 +158,24 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
                                                 </td>
                                                 <td colSpan={1}>
                                                     {
+                                                        edit ? allplayers[player.id]?.original_rank ? allplayers[player.id].original_rank :
+                                                            ((allplayers[player.id]?.rank_ecr === 1000) ? 'BYE' :
+                                                                (allplayers[player.id]?.rank_ecr || 999))
+                                                            : ((allplayers[player.id]?.rank_ecr === 1000) ? 'BYE' :
+                                                                (allplayers[player.id]?.rank_ecr || 999))
+                                                    }
+                                                </td>
+                                                <td colSpan={1} hidden={!edit}>
+                                                    {
+
                                                         edit ?
                                                             <input
                                                                 className={'editRank'}
                                                                 value={rankings[player.id]?.rank_ecr}
                                                                 onChange={(e) => handleRankChange(e, player.id)}
                                                             />
-                                                            :
-                                                            allplayers[player.id]?.rank_ecr === 1000 ? 'BYE' : allplayers[player.id]?.rank_ecr || 999
+                                                            : null
+
                                                     }
                                                 </td>
                                                 <td colSpan={1}>

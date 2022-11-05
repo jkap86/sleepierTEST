@@ -1,5 +1,6 @@
 
 export const match_weekly_rankings = async (weekly_rankings, allplayers) => {
+    const week = weekly_rankings.find(w_r => w_r.week).week
     const teams_playing = Array.from(new Set(weekly_rankings.map(w_r => w_r.player_team_id)))
     weekly_rankings.map(fp_id => {
         const searchName = (
@@ -45,6 +46,7 @@ export const match_weekly_rankings = async (weekly_rankings, allplayers) => {
     })
     Object.keys(allplayers).filter(id => !allplayers[id].rank_ecr).map(id => {
         allplayers[id].rank_ecr = !allplayers[id].team || teams_playing.includes(allplayers[id].team) ? 999 : 1000
+        allplayers[id].week = week
     })
     return (allplayers)
 }

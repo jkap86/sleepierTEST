@@ -8,6 +8,8 @@ const getWeeklyRankings = async () => {
 
     let script = []
     let $ = cheerio.load(html_sf.data)
+    const header = $('.rankings-page__heading').text()
+    const week = header.match(/(?<=Week )[0-9]+(?= \()/g)
     $('script').each((i, elem) => {
         if ($(elem).text().includes("var ecrData")) {
             script.push({
@@ -16,6 +18,7 @@ const getWeeklyRankings = async () => {
             })
         }
     })
+
 
     let rankings = script[0].text.substring(
         script[0].text.indexOf('[') + 1,
@@ -26,7 +29,7 @@ const getWeeklyRankings = async () => {
 
     let rankings_parsed = rankings.map(rank => {
         let parsed = JSON.parse(rank)
-
+        parsed['week'] = week[0]
         return parsed
     })
 

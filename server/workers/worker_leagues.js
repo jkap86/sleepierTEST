@@ -13,7 +13,7 @@ axiosRetry(axios, {
 
 const getLeagueInfo = async (leagues, user_id) => {
     let leagues_detailed = []
-    await Promise.all(leagues.map(async (league, index) => {
+    await Promise.all(leagues.filter(x => x.status === "in_season").map(async (league, index) => {
         const [rosters, users] = await Promise.all([
             await axios.get(`https://api.sleeper.app/v1/league/${league.league_id}/rosters`),
             await axios.get(`https://api.sleeper.app/v1/league/${league.league_id}/users`)
