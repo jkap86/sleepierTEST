@@ -293,7 +293,7 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
                 }>
                     <PlayersRankProj
                         allplayers={stateAllPlayers}
-                        playershares={statePlayerShares.sort((a, b) => stateAllPlayers[a.id].rank_ecr - stateAllPlayers[b.id].rank_ecr)}
+                        playershares={statePlayerShares.sort((a, b) => (stateAllPlayers[a.id]?.rank_ecr || 999) - (stateAllPlayers[b.id]?.rank_ecr || 999))}
                         sendRankEdit={sendRankEdit}
                     />
                 </React.Suspense >
