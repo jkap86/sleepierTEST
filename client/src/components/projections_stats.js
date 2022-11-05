@@ -109,7 +109,6 @@ export const getLineupCheck = (roster_positions, roster, allplayers) => {
             (allplayers[p]?.rank_ecr || 999) < (cur_rank || 999)
         )
         const subs_taxi = roster.taxi?.filter(p =>
-            roster.taxi?.includes(p) &&
             position_map[slot].includes(allplayers[p]?.position) &&
             (allplayers[p]?.rank_ecr || 999) < (cur_rank || 999)
         )
@@ -121,7 +120,8 @@ export const getLineupCheck = (roster_positions, roster, allplayers) => {
 
         lineup_check.push({
             index: index,
-            slot: slot_abbrev,
+            slot: slot,
+            slot_abbrev: slot_abbrev,
             cur_id: cur_id,
             cur_pos: allplayers[cur_id]?.position,
             cur_rank: cur_rank,

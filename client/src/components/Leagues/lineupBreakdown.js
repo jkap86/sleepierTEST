@@ -90,7 +90,7 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers }) => 
                 }
             </tbody>
             {
-                taxi?.length > 1 ?
+                taxi?.length > 0 ?
                     <thead>
                         <tr className={'single'}>
                             <th colSpan={9}>Taxi</th>
@@ -99,7 +99,7 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers }) => 
                     : null
             }
             {
-                taxi?.length > 1 ?
+                taxi?.length > 0 ?
                     <tbody>
                         {taxi
                             ?.map((bp, index) =>

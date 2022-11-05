@@ -4,7 +4,7 @@ import { getLineupCheck } from '../projections_stats';
 import throttle from 'lodash.throttle';
 const LineupBreakdown = React.lazy(() => import('./lineupBreakdown'));
 
-const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRef, rostersVisible, setRostersVisible, weekly_rankings, allplayers, syncLeague, user_id }) => {
+const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRef, rostersVisible, setRostersVisible, options, allplayers, syncLeague, user_id }) => {
     const [syncing, setSyncing] = useState(false)
 
     const handleSyncLeague = (league_id, user_id) => {
@@ -137,7 +137,7 @@ const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRe
                                                                 <LineupBreakdown
                                                                     type={2}
                                                                     roster={league.userRoster}
-                                                                    lineup_check={getLineupCheck(league.roster_positions, league.userRoster, allplayers)}
+                                                                    lineup_check={getLineupCheck(league.roster_positions, league.userRoster, allplayers, options.includeTaxi, options.rankMargin)}
                                                                     avatar={avatar}
                                                                     allplayers={allplayers}
                                                                 />

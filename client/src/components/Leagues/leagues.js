@@ -15,6 +15,10 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
         by: 'default',
         descending: true
     })
+    const [includeTaxi, setIncludeTaxi] = useState(1)
+    const [rankMargin, setRankMargin] = useState(0)
+
+    console.log(typeof (includeTaxi))
 
     const sortLeagues = (sort_by, prop_leagues, initial = false) => {
         let l = prop_leagues ? prop_leagues : leagues
@@ -104,20 +108,21 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
 
     useEffect(() => {
         let pl = prop_leagues.map(l => {
-            const league_check = getLineupCheck(l.roster_positions, l.userRoster, allplayers)
-            const empty_slots = l.userRoster.starters?.filter(s => s === '0').length
-            const bye_slots = league_check.filter(slot => slot.cur_rank === 1000).length
+            const league_check = getLineupCheck(l.roster_positions, l.userRoster, allplayers, parseInt(includeTaxi), parseInt(rankMargin))
+            const empty_slots = l.userRoster.starters?.filter(s => s === '0')
+            const bye_slots = league_check.filter(slot => slot.cur_rank === 1000).map(slot => slot.cur_id)
             return {
                 ...l,
-                empty_slots: empty_slots + bye_slots,
-                so_slots: league_check.filter(slot => !slot.isInOptimal).length,
+                empty_slots: empty_slots.length + bye_slots.length,
+                so_slots: league_check
+                    .filter(slot => !slot.isInOptimal && !empty_slots.includes(slot.cur_id) && !bye_slots.includes(slot.cur_id)).length,
                 qb_in_sf: league_check
                     .filter(slot => slot.slot === 'SF' && slot.cur_pos !== 'QB').length === 0,
                 optimal_lineup: league_check.filter(slot => !slot.isInOptimal).length === 0
             }
         })
         sortLeagues(sortedByRef.current.by, pl, true)
-    }, [prop_leagues])
+    }, [prop_leagues, includeTaxi, rankMargin])
 
     const leagues_display = searched.trim().length === 0 ? leagues :
         leagues.filter(x => x.name.trim() === searched.trim())
@@ -135,6 +140,10 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
             allplayers={allplayers}
             syncLeague={syncLeague}
             user_id={user_id}
+            options={{
+                includeTaxi: includeTaxi,
+                rankMargin: rankMargin
+            }}
         />
         : lineupCheck === 'Ranks' ?
             <LeaguesStandings
@@ -168,21 +177,40 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
             </ol>
         </div>
         <div className={`nav1`}>
-            <button
-                className={lineupCheck === 'Ranks' ? 'active clickable' : 'clickable'}
-                onClick={() => setLineupCheck('Ranks')}
-            >
-                Ranks
-            </button>
-            <button
-                className={lineupCheck === 'Lineup Check' ? 'active clickable' : 'clickable'}
-                onClick={() => setLineupCheck('Lineup Check')}
-            >
-                Lineup Check
-            </button>
+            <div className={'nav1_button_wrapper'}>
+                <button
+                    className={lineupCheck === 'Ranks' ? 'active clickable' : 'clickable'}
+                    onClick={() => setLineupCheck('Ranks')}
+                >
+                    Ranks
+                </button>
+                <button
+                    className={lineupCheck === 'Lineup Check' ? 'active clickable' : 'clickable'}
+                    onClick={() => setLineupCheck('Lineup Check')}
+                >
+                    Lineup Check
+                </button>
+            </div>
+            <div className={'lineupcheck_options'} hidden={lineupCheck !== 'Lineup Check'}>
+                <label>
+                    Include Taxi
+                    <select>
+                        <option value={1}>True</option>
+                        <option value={-1}>False</option>
+                    </select>
+                </label>
+                <label>
+                    Rank Margin
+                    <select>
+                        {Array.from(Array(25).keys()).map(key =>
+                            <option key={key}>{key}</option>
+                        )}
+                    </select>
+                </label>
+            </div>
         </div>
         {display}
     </>
 }
 
-export default React.memo(Leagues);
+export default Leagues;
