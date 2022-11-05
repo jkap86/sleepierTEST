@@ -32,8 +32,7 @@ app.get('/weeklyrankings', weekly_rankings)
 app.get('/user', async (req, res) => {
     const username = req.query.username
     try {
-        const user = await axios.get(`https://api.sleeper.app/v1/user/${username}`, config)
-        console.log(user.data)
+        const user = await axios.get(`https://api.sleeper.app/v1/user/${username}`)
         res.send(user.data)
     } catch (error) {
         console.log(error)
