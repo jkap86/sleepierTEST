@@ -13,7 +13,10 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
     const [page, setPage] = useState(1)
     const rowRef = useRef(null)
     const [filterTeam, setFilterTeam] = useState('All')
+    const [filterPosition, setFilterPosition] = useState('W/R/T/Q')
     const [searched, setSearched] = useState('')
+
+    console.log(filterPosition)
 
     useEffect(() => {
         setRankings(allplayers)
@@ -125,6 +128,7 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
                 playershares
                     .filter(x =>
                         (filterTeam === 'All' || allplayers[x.id]?.team === filterTeam) &&
+                        (filterPosition === allplayers[x.id]?.position || filterPosition.split('/').includes(allplayers[x.id]?.position.slice(0, 1))) &&
                         ((searched?.trim()?.length || 0) === 0 || allplayers[x.id]?.full_name === searched)
                     )
                     .slice((page - 1) * 25, ((page - 1) * 25) + 25).map((player, index) =>
@@ -204,16 +208,25 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
     return <>
         <span className="team">
             <label>
-                Team
+                <img
+                    className={'icon'}
+                    src={`https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/${filterTeam}.png`}
+                    onError={(e) => { return e.target.src = `https://a.espncdn.com/combiner/i?img=/i/teamlogos/leagues/500/nfl.png` }}
+                />
+                <select
+                    className="hidden clickable"
+                    onChange={(e) => setFilterTeam(e.target.value)}
+                    value={filterTeam}
+                >
+                    <option>All</option>
+                    {nfl_teams.map(team =>
+                        <React.Fragment key={team}>
+                            <option>{team}</option>
+                        </React.Fragment>
+                    )}
+                </select>
             </label>
-            <select onChange={(e) => setFilterTeam(e.target.value)}>
-                <option>All</option>
-                {nfl_teams.map(team =>
-                    <React.Fragment key={team}>
-                        <option>{team}</option>
-                    </React.Fragment>
-                )}
-            </select>
+
         </span>
         <React.Suspense fallback={<>...</>}>
             <Search
@@ -224,14 +237,28 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
         </React.Suspense>
         <span className="team">
             <label>
-                Position
+                <div className={`position_square${filterPosition.split('/').length}`}>
+                    {filterPosition.split('/').includes('W') || filterPosition === 'WR' ? <div className="wr">{filterPosition === 'WR' ? 'WR' : 'W'}</div> : null}
+                    {filterPosition.split('/').includes('R') || filterPosition === 'RB' ? <div className="rb">{filterPosition === 'RB' ? 'RB' : 'R'}</div> : null}
+                    {filterPosition.split('/').includes('T') || filterPosition === 'TE' ? <div className="te">{filterPosition === 'TE' ? 'TE' : 'T'}</div> : null}
+                    {filterPosition.split('/').includes('Q') || filterPosition === 'QB' ? <div className="qb">{filterPosition === 'QB' ? 'QB' : 'Q'}</div> : null}
+                </div>
+                <select
+                    className="hidden clickable"
+                    onChange={(e) => setFilterPosition(e.target.value)}
+                    value={filterPosition}
+                >
+                    <option>QB</option>
+                    <option>RB</option>
+                    <option>WR</option>
+                    <option>TE</option>
+                    <option>W/R/T/Q</option>
+                    <option>W/R/T</option>
+                    <option>W/R</option>
+                    <option>W/T</option>
+                </select>
             </label>
-            <select>
-                <option>QB</option>
-                <option>RB</option>
-                <option>WR</option>
-                <option>TE</option>
-            </select>
+
         </span>
         <div className="page_numbers_wrapper">
             <ol className="page_numbers">

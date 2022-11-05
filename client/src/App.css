@@ -8,6 +8,10 @@ html {
   --color7: #423e64;
   --color8: #020235;
   --color9: #152038;
+  --qb: #ff2a6d;
+  --rb: #00ceb8;
+  --wr: #58a7ff;
+  --te: #ffae58;
   font-size: 1.25vmin;
 }
 
@@ -375,19 +379,83 @@ button.clear {
 
 span.team {
   display: inline-flex;
-  flex-direction: column;
-  width: 7.5rem;
-  font-size: 2rem;
   vertical-align: top;
-  border: 0.25rem ridge var(--color4);
-  background-color: var(--color3);
-  color: var(--color4);
-  box-sizing: border-box;
+  width: fit-content;
 }
 
-span.team>select {
+span.team>label {
+  position: relative;
+  width: fit-content;
+  filter: drop-shadow(0 0 .5rem var(--color2));
+}
+
+div.position_square1,
+div.position_square2,
+div.position_square3,
+div.position_square4 {
   font-size: 2rem;
-  text-align: center;
+  display: flex;
+  height: 5rem;
+  width: 5rem;
+  flex-wrap: wrap;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+div.position_square1>div {
+  width: 100%;
+}
+
+div.position_square2>div {
+  width: 50%;
+}
+
+div.position_square3>div {
+  width: 33%;
+}
+
+div.position_square4>div {
+  flex-basis: 50%;
+}
+
+div.position_square1>div,
+div.position_square2>div,
+div.position_square3>div,
+div.position_square4>div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  text-shadow: 0 0 .5rem white;
+}
+
+div.qb {
+  background-color: var(--qb);
+}
+
+div.wr {
+  background-color: var(--wr);
+}
+
+div.te {
+  background-color: var(--te);
+
+}
+
+div.rb {
+  background-color: var(--rb);
+}
+
+span.team select.hidden {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  color: transparent;
 }
 
 div.page_numbers_wrapper {
@@ -425,6 +493,10 @@ ol.page_numbers>li {
 ol.page_numbers>li.active {
   color: var(--color2);
   border: 0.5rem ridge var(--color2);
+}
+
+img.icon {
+  width: 5rem;
 }
 
 img.thumbnail {
