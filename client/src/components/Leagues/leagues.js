@@ -9,7 +9,7 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
     const [searched, setSearched] = useState('')
     const [page, setPage] = useState(1)
     const [rostersVisible, setRostersVisible] = useState('')
-    const [lineupCheck, setLineupCheck] = useState('Ranks');
+    const [lineupCheck, setLineupCheck] = useState('League Summary');
     const rowRef = useRef(null)
     const sortedByRef = useRef({
         by: 'default',
@@ -18,7 +18,7 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
     const [includeTaxi, setIncludeTaxi] = useState(1)
     const [rankMargin, setRankMargin] = useState(0)
 
-    console.log(typeof (rankMargin))
+
 
     const sortLeagues = (sort_by, prop_leagues, initial = false) => {
         let l = prop_leagues ? prop_leagues : leagues
@@ -117,7 +117,7 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
                 so_slots: league_check
                     .filter(slot => (!slot.isInOptimal || (slot.subs.length + slot.subs_taxi?.length) > 0) && !empty_slots.includes(slot.cur_id) && !bye_slots.includes(slot.cur_id)).length,
                 qb_in_sf: league_check
-                    .filter(slot => slot.slot === 'SF' && slot.cur_pos !== 'QB').length === 0,
+                    .filter(slot => slot.slot === 'SUPER_FLEX' && slot.cur_pos !== 'QB').length === 0,
                 optimal_lineup: league_check.filter(slot => !slot.isInOptimal).length === 0,
                 lineup_check: league_check
             }
@@ -146,7 +146,7 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
                 rankMargin: rankMargin
             }}
         />
-        : lineupCheck === 'Ranks' ?
+        : lineupCheck === 'League Summary' ?
             <LeaguesStandings
                 sortLeagues={sortLeagues}
                 leagues_display={leagues_display}
@@ -180,10 +180,10 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
         <div className={`nav1`}>
             <div className={'nav1_button_wrapper'}>
                 <button
-                    className={lineupCheck === 'Ranks' ? 'active clickable' : 'clickable'}
-                    onClick={() => setLineupCheck('Ranks')}
+                    className={lineupCheck === 'League Summary' ? 'active clickable' : 'clickable'}
+                    onClick={() => setLineupCheck('League Summary')}
                 >
-                    Ranks
+                    Summary
                 </button>
                 <button
                     className={lineupCheck === 'Lineup Check' ? 'active clickable' : 'clickable'}
@@ -193,6 +193,7 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
                 </button>
             </div>
             <div className={'lineupcheck_options'} hidden={lineupCheck !== 'Lineup Check'}>
+
                 <label>
                     Include Taxi
                     <select

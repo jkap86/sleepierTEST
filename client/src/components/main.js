@@ -29,7 +29,7 @@ const Main = () => {
             const allplayers = await axios.get('/allplayers')
             const weekly_rankings = await axios.get('/weeklyrankings')
             const matched_rankings = await match_weekly_rankings(weekly_rankings.data, allplayers.data)
-            console.log(weekly_rankings.data)
+
             setStateAllPlayers(matched_rankings)
         }
         fetchData()

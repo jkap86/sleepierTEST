@@ -38,7 +38,7 @@ const getLeagueInfo = async (leagues, user_id) => {
 
         const userRoster = standings.find(r => r.owner_id === user_id || r.co_owners?.includes(user_id))
 
-        if (userRoster?.players) {
+        if (userRoster?.players?.length > 0) {
             leagues_detailed.push({
                 ...league,
                 index: index,

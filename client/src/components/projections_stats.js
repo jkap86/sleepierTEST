@@ -102,7 +102,7 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
             .filter(p => position_map[slot].includes(allplayers[p.id]?.position))
             .sort((a, b) => (a.rank || 999) - (b.rank || 999))
 
-        const optimal_player = slot_options[0].id
+        const optimal_player = slot_options[0]?.id
         player_ranks = player_ranks.filter(p => p.id !== optimal_player)
         optimal_lineup.push(optimal_player)
     })
