@@ -200,8 +200,7 @@ const Main = () => {
             const leagues = await axios.get('/leagues', {
                 params: {
                     user_id: user.user_id
-                },
-                timeout: 5000
+                }
             })
             setStateLeagues(leagues.data.leagues.sort((a, b) => a.index - b.index))
 
