@@ -66,8 +66,8 @@ export const getNewRank = (rankings, prevRank, newRank, player_id, playerToIncre
     return incrementedRank
 }
 
-export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi, rankMargin, stateStats) => {
-    const teams_already_played = Array.from(new Set(stateStats.map(x => x.team)))
+export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi, rankMargin) => {
+
 
     const position_map = {
         'QB': ['QB'],
@@ -104,10 +104,6 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
                 !roster.taxi?.includes(player.id)
             )
     }
-    player_ranks = player_ranks
-        .filter(player =>
-            (roster.starters.includes(player.id) || !teams_already_played.includes(allplayers[player.id]?.team))
-        )
 
     let optimal_lineup = []
     starting_slots.map((slot, index) => {
@@ -115,8 +111,7 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
             .filter(p => position_map[slot].includes(allplayers[p.id]?.position))
             .sort((a, b) => a.rank - b.rank)
 
-        const optimal_player = teams_already_played.includes(allplayers[roster.starters[index]]?.team) && !optimal_lineup.includes(roster.starters[index]) ?
-            roster.starters[index] : slot_options[0]?.id
+        const optimal_player = slot_options[0]?.id
         player_ranks = player_ranks.filter(p => p.id !== optimal_player)
         optimal_lineup.push(optimal_player)
     })
@@ -129,12 +124,10 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
                 !roster.starters.includes(p) &&
                 !roster.taxi?.includes(p) &&
                 position_map[slot].includes(allplayers[p]?.position) &&
-                !teams_already_played.includes(allplayers[p]?.team) &&
                 allplayers[p]?.rank_ecr < (allplayers[cur_id]?.rank_ecr - rankMargin)
             )
         const subs_taxi = roster.taxi?.filter(p =>
             position_map[slot].includes(allplayers[p]?.position) &&
-            !teams_already_played.includes(allplayers[p]?.team) &&
             allplayers[p]?.rank_ecr < (allplayers[cur_id]?.rank_ecr - rankMargin)
         ) || []
         const slot_abbrev = slot

@@ -41,9 +41,6 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers }) => 
                                     .indexOf(slot.cur_id) + 1)
                     }
                 </td>
-                <td>
-                    {slot.isInOptimal ? 'TRUE' : 'FALSE'}
-                </td>
             </tr>
         </tbody>
     )
@@ -108,9 +105,6 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers }) => 
                                                     .indexOf(bp) + 1)
                                     }
                                 </td>
-                                <td>
-                                    {lineup_check[0].optimal_lineup.includes(bp) ? 'TRUE' : 'FALSE'}
-                                </td>
                             </tr>
                         )
                 }
@@ -158,9 +152,6 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers }) => 
                                                         .sort((a, b) => (allplayers[a].rank_ecr || 999) - (allplayers[b].rank_ecr || 999))
                                                         .indexOf(bp) + 1)
                                         }
-                                    </td>
-                                    <td>
-                                        {lineup_check[0].optimal_lineup.includes(bp) ? 'TRUE' : 'FALSE'}
                                     </td>
                                 </tr>
                             )
