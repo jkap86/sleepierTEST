@@ -84,7 +84,7 @@ div.logo_wrapper div.three {
   }
 }
 
-.clickable {
+.clickable:hover {
   cursor: pointer;
 }
 
@@ -93,6 +93,10 @@ input.editRank {
   font-size: 2rem;
   text-align: center;
   background-color: var(--color2);
+}
+
+i {
+  position: relative;
 }
 
 i.green {
@@ -446,16 +450,16 @@ div.rb {
   background-color: var(--rb);
 }
 
-span.team select.hidden {
+.hidden {
   position: absolute;
   left: 0;
   right: 0;
   top: 0;
   bottom: 0;
-  width: 100%;
   background-color: transparent;
   border: none;
   color: transparent;
+  opacity: 0;
 }
 
 div.page_numbers_wrapper {

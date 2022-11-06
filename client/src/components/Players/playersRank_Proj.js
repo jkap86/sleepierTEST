@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { avatar } from "../misc_functions";
 import { getNewRank } from "../projections_stats";
-import { writeFile, utils } from 'xlsx';
+import { writeFile, utils, read } from 'xlsx';
 const PlayerStartBench = React.lazy(() => import('./playerStartBench'))
 const Search = React.lazy(() => import('../search'));
 
@@ -47,6 +47,8 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
             .filter(id => playershares.find(ps => ps.id === id))
             .map(id => {
                 return {
+                    id: id,
+                    fantasypros: allplayers[id].original_rank || allplayers[id].rank_ecr,
                     rank: allplayers[id].rank_ecr,
                     player: allplayers[id].full_name,
                     position: allplayers[id].position,
@@ -59,6 +61,32 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
         const workbook = utils.book_new()
         utils.book_append_sheet(workbook, worksheet, "Rankings")
         writeFile(workbook, "SleepierRankings.csv")
+    }
+
+    const importRankings = (e) => {
+        if (e.target.files) {
+            const reader = new FileReader()
+            reader.onload = (e) => {
+                let r = allplayers
+                const data = e.target.result
+                const workbook = read(data, { type: 'array' })
+                const sheetName = workbook.SheetNames[0]
+                const worksheet = workbook.Sheets[sheetName]
+                let json = utils.sheet_to_json(worksheet)
+                json.map(player =>
+                    r[player.id] = {
+                        ...r[player.id],
+                        original_rank: r[player.id].rank_ecr,
+                        rank_ecr: player.rank,
+                        past_rank: player.fantasypros
+                    }
+                )
+                console.log(r)
+                setRankings({ ...r })
+                setEdit(true)
+            }
+            reader.readAsArrayBuffer(e.target.files[0])
+        }
     }
 
     const nfl_teams = [
@@ -81,6 +109,11 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
                     >
                     </i>
                     Player
+                    <i
+                        className={'fa fa-upload clickable right'}
+                    >
+                        <input type={'file'} className={'hidden clickable'} onChange={(e) => importRankings(e)} />
+                    </i>
                 </th>
                 <th colSpan={4 + (edit ? 1 : 0)}>
                     {`Week ${week} Rankings`}
@@ -156,12 +189,13 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
                                                         {allplayers[player.id]?.team}
                                                     </p>
                                                 </td>
-                                                <td colSpan={1}>
+                                                <td colSpan={1} className={'relative'}>
                                                     {
-                                                        edit ? allplayers[player.id]?.original_rank ? allplayers[player.id].original_rank :
+                                                        edit ?
+                                                            allplayers[player.id]?.original_rank ? allplayers[player.id].original_rank :
+                                                                ((allplayers[player.id]?.rank_ecr === 1000) ? 'BYE' :
+                                                                    (allplayers[player.id]?.rank_ecr || 999)) :
                                                             ((allplayers[player.id]?.rank_ecr === 1000) ? 'BYE' :
-                                                                (allplayers[player.id]?.rank_ecr || 999))
-                                                            : ((allplayers[player.id]?.rank_ecr === 1000) ? 'BYE' :
                                                                 (allplayers[player.id]?.rank_ecr || 999))
                                                     }
                                                 </td>
