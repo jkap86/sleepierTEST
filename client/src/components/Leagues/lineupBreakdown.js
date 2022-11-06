@@ -13,7 +13,7 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers }) => 
                 onClick={() => setActiveSlot(prevState => slot === prevState ? null : slot)}
             >
                 <td colSpan={1}
-                    className={!slot.isInOptimal || (slot.subs.length + slot.subs_taxi?.length) > 0 ? 'sub' : null}
+                    className={(slot.subs.length + slot.subs_taxi?.length) > 0 ? 'sub' : null}
                 >
                     {slot.slot_abbrev}
                 </td>

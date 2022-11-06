@@ -109,16 +109,16 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague, stateStats }) 
     useEffect(() => {
         let pl = prop_leagues.map(l => {
             const league_check = getLineupCheck(l.roster_positions, l.userRoster, allplayers, parseInt(includeTaxi), parseInt(rankMargin), stateStats)
-            const empty_slots = l.userRoster.starters?.filter(s => s === '0')
-            const bye_slots = league_check.filter(slot => slot.cur_rank === 1000).map(slot => slot.cur_id)
+            const empty_slots = l.userRoster.starters?.filter(s => s === '0').length
+            const bye_slots = league_check.filter(slot => slot.cur_rank === 1000).map(slot => slot.cur_id).length
+            const so_slots = league_check.filter(slot => (slot.subs?.length > 0) || (slot.subs_taxi?.length > 0)).length
             return {
                 ...l,
-                empty_slots: empty_slots.length + bye_slots.length,
-                so_slots: league_check
-                    .filter(slot => (!slot.isInOptimal || (slot.subs.length + slot.subs_taxi?.length) > 0) && !empty_slots.includes(slot.cur_id) && !bye_slots.includes(slot.cur_id)).length,
+                empty_slots: empty_slots + bye_slots,
+                so_slots: so_slots,
                 qb_in_sf: league_check
-                    .filter(slot => slot.slot === 'SUPER_FLEX' && slot.cur_pos !== 'QB').length === 0,
-                optimal_lineup: league_check.filter(slot => !slot.isInOptimal).length === 0,
+                    .filter(slot => slot.slot === 'SUPER_FLEX' && allplayers[slot.cur_id]?.position !== 'QB').length < 1,
+                optimal_lineup: empty_slots + bye_slots + so_slots === 0,
                 lineup_check: league_check
             }
         })
