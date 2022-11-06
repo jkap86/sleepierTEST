@@ -29,7 +29,17 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers }) => 
                     {slot.cur_rank === 1000 ? 'BYE' : slot.cur_rank}
                 </td>
                 <td>
-                    {slot.cur_pos_rank}
+                    {
+                        allplayers[slot.cur_id]?.rank_ecr >= 999 ? '-' :
+                            allplayers[slot.cur_id]?.position === 'FB' ? 'RB' : allplayers[slot.cur_id]?.position + "" +
+                                (Object.keys(allplayers)
+                                    .filter(ap =>
+                                        allplayers[ap].position === allplayers[slot.cur_id]?.position ||
+                                        (allplayers[slot.cur_id]?.position === 'FB' && ['FB', 'RB'].includes(allplayers[ap].position))
+                                    )
+                                    .sort((a, b) => (allplayers[a].rank_ecr || 999) - (allplayers[b].rank_ecr || 999))
+                                    .indexOf(slot.cur_id) + 1)
+                    }
                 </td>
             </tr>
         </tbody>
@@ -83,7 +93,17 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers }) => 
                                     {allplayers[bp]?.rank_ecr === 1000 ? 'BYE' : allplayers[bp]?.rank_ecr || 999}
                                 </td>
                                 <td colSpan={2}>
-                                    {allplayers[bp]?.pos_rank || '-'}
+                                    {
+                                        allplayers[bp]?.rank_ecr >= 999 ? '-' :
+                                            allplayers[bp]?.position === 'FB' ? 'RB' : allplayers[bp]?.position + "" +
+                                                (Object.keys(allplayers)
+                                                    .filter(ap =>
+                                                        allplayers[ap].position === allplayers[bp]?.position ||
+                                                        (allplayers[bp]?.position === 'FB' && ['FB', 'RB'].includes(allplayers[ap].position))
+                                                    )
+                                                    .sort((a, b) => (allplayers[a].rank_ecr || 999) - (allplayers[b].rank_ecr || 999))
+                                                    .indexOf(bp) + 1)
+                                    }
                                 </td>
                             </tr>
                         )
@@ -121,7 +141,17 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers }) => 
                                         {allplayers[bp]?.rank_ecr || '-'}
                                     </td>
                                     <td colSpan={2}>
-                                        {allplayers[bp]?.pos_rank || '-'}
+                                        {
+                                            allplayers[bp]?.rank_ecr >= 999 ? '-' :
+                                                allplayers[bp]?.position === 'FB' ? 'RB' : allplayers[bp]?.position + "" +
+                                                    (Object.keys(allplayers)
+                                                        .filter(ap =>
+                                                            allplayers[ap].position === allplayers[bp]?.position ||
+                                                            (allplayers[bp]?.position === 'FB' && ['FB', 'RB'].includes(allplayers[ap].position))
+                                                        )
+                                                        .sort((a, b) => (allplayers[a].rank_ecr || 999) - (allplayers[b].rank_ecr || 999))
+                                                        .indexOf(bp) + 1)
+                                        }
                                     </td>
                                 </tr>
                             )
