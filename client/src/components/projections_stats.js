@@ -119,17 +119,20 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
     let lineup_check = []
     starting_slots.map((slot, index) => {
         const cur_id = roster.starters[index]
-        const subs = roster.players
+        const subs = teams_already_played.includes(allplayers[cur_id]?.team) ? [] : roster.players
             .filter(p =>
                 !roster.starters.includes(p) &&
                 !roster.taxi?.includes(p) &&
                 position_map[slot].includes(allplayers[p]?.position) &&
                 allplayers[p]?.rank_ecr < (allplayers[cur_id]?.rank_ecr - rankMargin)
             )
-        const subs_taxi = roster.taxi?.filter(p =>
-            position_map[slot].includes(allplayers[p]?.position) &&
-            allplayers[p]?.rank_ecr < (allplayers[cur_id]?.rank_ecr - rankMargin)
-        ) || []
+        const subs_taxi = (includeTaxi < 0 || teams_already_played.includes(allplayers[cur_id]?.team)) ? [] :
+            roster.taxi?.filter(p =>
+                position_map[slot].includes(allplayers[p]?.position) &&
+                allplayers[p]?.rank_ecr < (allplayers[cur_id]?.rank_ecr - rankMargin) &&
+                !teams_already_played.includes(allplayers[p]?.team)
+            )
+
         const slot_abbrev = slot
             .replace('SUPER_FLEX', 'SF')
             .replace('FLEX', 'W/R/T')
@@ -142,9 +145,9 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
             slot_abbrev: slot_abbrev,
             cur_id: cur_id,
             cur_rank: allplayers[cur_id]?.rank_ecr,
-            subs: teams_already_played.includes(allplayers[cur_id]?.team) ? [] : subs.filter(x => !teams_already_played.includes(allplayers[x]?.team)),
-            subs_taxi: includeTaxi > 0 ? subs_taxi.filter(x => !teams_already_played.includes(allplayers[x]?.team)) : [],
-            isInOptimal: optimal_lineup.includes(cur_id) || teams_already_played.includes(allplayers[cur_id]?.team) || (subs.filter(x => !teams_already_played.includes(allplayers[x]?.team).length === 0)) ? true : false,
+            subs: subs,
+            subs_taxi: subs_taxi,
+            isInOptimal: optimal_lineup.includes(cur_id),
             optimal_lineup: optimal_lineup
         })
     })
