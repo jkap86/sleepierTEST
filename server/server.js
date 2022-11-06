@@ -14,17 +14,45 @@ app.use(express.json());
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 
-const getAllPlayers = async () => {
+const dailySync = async () => {
     const allplayers = await axios.get('https://api.sleeper.app/v1/players/nfl', { timeout: 3000 })
-
     app.set('allplayers', allplayers.data)
+    const state = await axios.get('https://api.sleeper.app/v1/state/nfl')
+    app.set('week', state.data.week)
 }
-getAllPlayers()
-setInterval(getAllPlayers, 1000 * 60 * 60 * 24)
+dailySync()
+setInterval(dailySync, 1000 * 60 * 60 * 24)
+
+const syncStats = async () => {
+    const date = new Date();
+    const hour = date.getHours()
+    const week = app.get('week')
+    if (hour === 3 && week >= 1 && week <= 18) {
+        const stats = await axios.get(`https://api.sleeper.com/stats/nfl/2022/${week}?season_type=regular`)
+        app.set('stats', stats.data)
+        console.log(`Week ${week} stats synced`)
+    }
+
+}
+const getStats = async () => {
+    const state = await axios.get('https://api.sleeper.app/v1/state/nfl')
+    const week = state.data.week
+    if (week >= 1 && week <= 18) {
+        const stats = await axios.get(`https://api.sleeper.com/stats/nfl/2022/${week}?season_type=regular`)
+        app.set('stats', stats.data)
+    }
+}
+getStats()
+setInterval(syncStats, 1000 * 60 * 60)
 
 app.get('/allplayers', (req, res) => {
     const allplayers = app.get('allplayers')
     res.send(allplayers)
+})
+
+app.get('/stats', (req, res) => {
+    const stats = app.get('stats')
+    res.send(stats)
 })
 
 app.get('/weeklyrankings', weekly_rankings)

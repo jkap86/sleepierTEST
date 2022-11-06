@@ -13,6 +13,7 @@ const Main = () => {
     const [stateLeagues, setStateLeagues] = useState([]);
     const [stateLeaguemates, setStateLeaguemates] = useState([]);
     const [statePlayerShares, setStatePlayerShares] = useState([]);
+    const [stateStats, setStateStats] = useState([])
 
     axiosRetry(axios, {
         retries: 5,
@@ -29,21 +30,27 @@ const Main = () => {
             const allplayers = await axios.get('/allplayers')
             const weekly_rankings = await axios.get('/weeklyrankings')
             const matched_rankings = await match_weekly_rankings(weekly_rankings.data, allplayers.data)
-
             setStateAllPlayers(matched_rankings)
+            const stats = await axios.get('/stats')
+            console.log(stats.data)
+            setStateStats(stats.data)
         }
         fetchData()
     }, [])
 
     useEffect(() => {
-        const syncAllPlayers = setInterval(() => {
+        const dailySync = setInterval(() => {
             const fetchSync = async () => {
                 const allplayers = await axios.get('/allplayers')
-                setStateAllPlayers(allplayers.data)
+                const weekly_rankings = await axios.get('/weeklyrankings')
+                const matched_rankings = await match_weekly_rankings(weekly_rankings.data, allplayers.data)
+                setStateAllPlayers(matched_rankings)
+                const stats = await axios.get('/stats')
+                setStateStats(stats.data)
             }
             fetchSync()
         }, 1000 * 60 * 60 * 24)
-        return () => clearInterval(syncAllPlayers)
+        return () => clearInterval(dailySync)
 
     }, [])
 
@@ -247,6 +254,7 @@ const Main = () => {
             stateLeagues={stateLeagues}
             stateLeaguemates={stateLeaguemates}
             statePlayerShares={statePlayerShares}
+            stateStats={stateStats}
             syncLeague={syncLeague}
             sendRankEdit={setStateAllPlayers}
         />

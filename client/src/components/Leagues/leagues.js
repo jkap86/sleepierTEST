@@ -4,7 +4,7 @@ const Search = React.lazy(() => import('../search'));
 const LeaguesStandings = React.lazy(() => import('./leaguesStandings'));
 const LeaguesLineupCheck = React.lazy(() => import('./leaguesLineupCheck'));
 
-const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
+const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague, stateStats }) => {
     const [leagues, setLeagues] = useState([])
     const [searched, setSearched] = useState('')
     const [page, setPage] = useState(1)
@@ -108,7 +108,7 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
 
     useEffect(() => {
         let pl = prop_leagues.map(l => {
-            const league_check = getLineupCheck(l.roster_positions, l.userRoster, allplayers, parseInt(includeTaxi), parseInt(rankMargin))
+            const league_check = getLineupCheck(l.roster_positions, l.userRoster, allplayers, parseInt(includeTaxi), parseInt(rankMargin), stateStats)
             const empty_slots = l.userRoster.starters?.filter(s => s === '0')
             const bye_slots = league_check.filter(slot => slot.cur_rank === 1000).map(slot => slot.cur_id)
             return {
@@ -123,7 +123,7 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague }) => {
             }
         })
         sortLeagues(sortedByRef.current.by, pl, true)
-    }, [prop_leagues, includeTaxi, rankMargin])
+    }, [prop_leagues, includeTaxi, rankMargin, stateStats])
 
     const leagues_display = searched.trim().length === 0 ? leagues :
         leagues.filter(x => x.name.trim() === searched.trim())

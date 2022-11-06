@@ -26,6 +26,7 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
         let r = rankings
         const prevRank = rankings[player_id].rank_ecr
         const newRank = e.target.value
+
         Object.keys(rankings)
             .map((player, index) => {
                 rankings[player].original_rank = rankings[player].original_rank || rankings[player].rank_ecr
@@ -213,17 +214,8 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
                                                     }
                                                 </td>
                                                 <td colSpan={1}>
-                                                    {allplayers[player.id]?.position === 'FB' ? 'RB' : allplayers[player.id]?.position}
-                                                    {
+                                                    {allplayers[player.id]?.pos_rank}
 
-                                                        (Object.keys(allplayers)
-                                                            .filter(ap =>
-                                                                allplayers[ap].position === allplayers[player.id]?.position ||
-                                                                (allplayers[player.id]?.position === 'FB' && ['FB', 'RB'].includes(allplayers[ap].position))
-                                                            )
-                                                            .sort((a, b) => (allplayers[a].rank_ecr || 999) - (allplayers[b].rank_ecr || 999))
-                                                            .indexOf(player.id) + 1)
-                                                    }
                                                 </td>
                                                 <td>{allplayers[player.id]?.rank_min}</td>
                                                 <td>{allplayers[player.id]?.rank_max}</td>
