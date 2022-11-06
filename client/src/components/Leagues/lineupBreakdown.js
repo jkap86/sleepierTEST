@@ -15,7 +15,7 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers }) => 
                 <td colSpan={1}
                     className={!slot.isInOptimal || (slot.subs.length + slot.subs_taxi?.length) > 0 ? 'sub' : null}
                 >
-                    {slot.slot}
+                    {slot.slot_abbrev}
                 </td>
                 <td colSpan={3} className={'left'}>
                     <p>

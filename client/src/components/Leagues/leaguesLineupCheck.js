@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { avatar } from "../misc_functions";
 const LineupBreakdown = React.lazy(() => import('./lineupBreakdown'));
 
-const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRef, rostersVisible, setRostersVisible, options, allplayers, syncLeague, user_id }) => {
+const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRef, rostersVisible, setRostersVisible, allplayers, syncLeague, user_id }) => {
     const [syncing, setSyncing] = useState(false)
 
     const handleSyncLeague = (league_id, user_id) => {
