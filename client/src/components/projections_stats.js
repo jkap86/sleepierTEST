@@ -85,7 +85,7 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
     let player_ranks = roster.players.map(player => {
         let rank = (allplayers[player]?.rank_ecr || 999)
         if (roster.starters?.includes(player)) {
-            rank = Math.max((rank - rankMargin), 1)
+            rank = (rank - rankMargin)
 
         } else {
             rank = allplayers[player]?.rank_ecr || 999
@@ -94,7 +94,6 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
         return {
             id: player,
             rank: parseInt(rank),
-            rank_pos: allplayers[player]?.pos_rank,
             starter: roster.starters?.includes(player) ? 1 : 2
         }
     })
@@ -114,9 +113,10 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
     starting_slots.map((slot, index) => {
         const slot_options = player_ranks
             .filter(p => position_map[slot].includes(allplayers[p.id]?.position))
-            .sort((a, b) => a.rank - b.rank || a.starter - b.starter)
+            .sort((a, b) => a.rank - b.rank)
 
-        const optimal_player = teams_already_played.includes(allplayers[roster.starters[index]]?.team) ? roster.starters[index] : slot_options[0]?.id
+        const optimal_player = teams_already_played.includes(allplayers[roster.starters[index]]?.team) && !optimal_lineup.includes(roster.starters[index]) ?
+            roster.starters[index] : slot_options[0]?.id
         player_ranks = player_ranks.filter(p => p.id !== optimal_player)
         optimal_lineup.push(optimal_player)
     })
