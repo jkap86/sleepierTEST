@@ -512,6 +512,11 @@ img.thumbnail {
   margin: 0.5rem;
 }
 
+img.thumbnail.small {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
 th.small {
   font-size: 75%;
   overflow-x: scroll;

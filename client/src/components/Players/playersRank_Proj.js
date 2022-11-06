@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { avatar } from "../misc_functions";
 import { getNewRank } from "../projections_stats";
 import { writeFile, utils, read } from 'xlsx';
-const PlayerStartBench = React.lazy(() => import('./playerStartBench'))
+import fantasypros_icon from '../../images/FantasyPros.jpeg'
 const Search = React.lazy(() => import('../search'));
 
 const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
@@ -95,7 +95,7 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
         'NE', 'NO', 'NYG', 'NYJ', 'PHI', 'PIT', 'SF', 'SEA', 'TB', 'TEN', 'WAS'
     ]
 
-    const week = rankings[Object.keys(rankings)[0]]?.week
+
 
     const header = (
         <>
@@ -115,13 +115,7 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
                         <input type={'file'} className={'hidden clickable'} onChange={(e) => importRankings(e)} />
                     </i>
                 </th>
-                <th colSpan={4 + (edit ? 1 : 0)}>
-                    {`Week ${week} Rankings`}
-                </th>
-                <th colSpan={2} rowSpan={2}>Opp</th>
-            </tr>
-            <tr className="main_header double">
-                <th colSpan={1 + (edit ? 1 : 0)}>
+                <th colSpan={1 + (edit ? 1 : 0)} rowSpan={edit ? 1 : 2}>
                     {
                         edit ?
                             <>
@@ -151,10 +145,25 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
                             </i>
                     }
                 </th>
-                <th colSpan={1}>Pos</th>
-                <th colSpan={1}>Min</th>
-                <th colSpan={1}>Max</th>
+                <th colSpan={1} rowSpan={2}>Pos</th>
+                <th colSpan={1} rowSpan={2}>Min</th>
+                <th colSpan={1} rowSpan={2}>Max</th>
+                <th colSpan={2} rowSpan={2}>Opp</th>
             </tr>
+            {
+                edit ?
+                    <tr className="main_header double">
+                        <th className="small">
+                            <img
+                                className="thumbnail small"
+                                src={fantasypros_icon}
+                            />
+                        </th>
+                        <th className="small">Custom</th>
+                    </tr>
+                    : null
+
+            }
         </>
     )
 
@@ -251,6 +260,7 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
             }
         </>
     )
+    const week = rankings[Object.keys(rankings)[0]]?.week
 
     return <>
         <span className="team">
@@ -320,7 +330,7 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
             <button
                 className={'active clickable'}
             >
-                Rankings
+                {`Week ${week} Rankings`}
             </button>
         </div>
         <table className="main">
