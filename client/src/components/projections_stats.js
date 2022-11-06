@@ -66,8 +66,8 @@ export const getNewRank = (rankings, prevRank, newRank, player_id, playerToIncre
     return incrementedRank
 }
 
-export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi, rankMargin) => {
-
+export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi, rankMargin, stateStats) => {
+    const teams_already_played = Array.from(new Set(stateStats.map(x => x.team)))
 
     const position_map = {
         'QB': ['QB'],
@@ -142,9 +142,9 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
             slot_abbrev: slot_abbrev,
             cur_id: cur_id,
             cur_rank: allplayers[cur_id]?.rank_ecr,
-            subs: subs,
-            subs_taxi: includeTaxi > 0 ? subs_taxi : [],
-            isInOptimal: optimal_lineup.includes(cur_id),
+            subs: teams_already_played.includes(allplayers[cur_id]?.team) ? [] : subs.filter(x => !teams_already_played.includes(allplayers[x]?.team)),
+            subs_taxi: includeTaxi > 0 ? subs_taxi.filter(x => !teams_already_played.includes(allplayers[x]?.team)) : [],
+            isInOptimal: optimal_lineup.includes(cur_id) || teams_already_played.includes(allplayers[cur_id]?.team),
             optimal_lineup: optimal_lineup
         })
     })
