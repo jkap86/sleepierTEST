@@ -25,9 +25,15 @@ setInterval(dailySync, 1000 * 60 * 60 * 24)
 
 const syncStats = async () => {
     const date = new Date();
+    const day = date.getDay()
     const hour = date.getHours()
+    const minute = date.getMinutes()
     const week = app.get('week')
-    if (hour === 3 && week >= 1 && week <= 18) {
+    if (day === 0 && week >= 1 && week <= 18) {
+        const stats = await axios.get(`https://api.sleeper.com/stats/nfl/2022/${week}?season_type=regular`)
+        app.set('stats', stats.data)
+        console.log(`Week ${week} stats synced`)
+    } else if (hour === 3 && minute < 30 && week >= 1 && week <= 18) {
         const stats = await axios.get(`https://api.sleeper.com/stats/nfl/2022/${week}?season_type=regular`)
         app.set('stats', stats.data)
         console.log(`Week ${week} stats synced`)
@@ -43,7 +49,7 @@ const getStats = async () => {
     }
 }
 getStats()
-setInterval(syncStats, 1000 * 60 * 60)
+setInterval(syncStats, 1000 * 60 * 30)
 
 app.get('/allplayers', (req, res) => {
     const allplayers = app.get('allplayers')

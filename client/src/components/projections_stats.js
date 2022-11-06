@@ -68,7 +68,7 @@ export const getNewRank = (rankings, prevRank, newRank, player_id, playerToIncre
 
 export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi, rankMargin, stateStats) => {
     const teams_already_played = Array.from(new Set(stateStats.map(x => x.team)))
-
+    console.log(teams_already_played)
     const position_map = {
         'QB': ['QB'],
         'RB': ['RB', 'FB'],
@@ -93,17 +93,9 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
 
         return {
             id: player,
-            rank: parseInt(rank),
-            starter: roster.starters?.includes(player) ? 1 : 2
+            rank: parseInt(rank)
         }
     })
-
-    if (includeTaxi < 0) {
-        player_ranks = player_ranks
-            .filter(player =>
-                !roster.taxi?.includes(player.id)
-            )
-    }
 
     let optimal_lineup = []
     starting_slots.map((slot, index) => {
@@ -126,12 +118,13 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
                 position_map[slot].includes(allplayers[p]?.position) &&
                 allplayers[p]?.rank_ecr < (allplayers[cur_id]?.rank_ecr - rankMargin)
             )
-        const subs_taxi = (includeTaxi < 0 || teams_already_played.includes(allplayers[cur_id]?.team)) ? [] :
+        const subs_taxi = (includeTaxi < 0 ? [] :
             roster.taxi?.filter(p =>
                 position_map[slot].includes(allplayers[p]?.position) &&
                 allplayers[p]?.rank_ecr < (allplayers[cur_id]?.rank_ecr - rankMargin) &&
                 !teams_already_played.includes(allplayers[p]?.team)
-            )
+            ) || []
+        )
 
         const slot_abbrev = slot
             .replace('SUPER_FLEX', 'SF')
@@ -145,8 +138,8 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
             slot_abbrev: slot_abbrev,
             cur_id: cur_id,
             cur_rank: allplayers[cur_id]?.rank_ecr,
-            subs: subs,
-            subs_taxi: subs_taxi,
+            subs: teams_already_played.includes(allplayers[cur_id]?.team) ? [] : subs.filter(x => !teams_already_played.includes(allplayers[x]?.team)),
+            subs_taxi: teams_already_played.includes(allplayers[cur_id]?.team) ? [] : subs_taxi.filter(x => !teams_already_played.includes(allplayers[x]?.team)),
             isInOptimal: optimal_lineup.includes(cur_id),
             optimal_lineup: optimal_lineup
         })

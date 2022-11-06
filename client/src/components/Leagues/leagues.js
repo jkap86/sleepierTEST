@@ -118,7 +118,7 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague, stateStats }) 
                 so_slots: so_slots,
                 qb_in_sf: league_check
                     .filter(slot => slot.slot === 'SUPER_FLEX' && allplayers[slot.cur_id]?.position !== 'QB').length < 1,
-                optimal_lineup: empty_slots + bye_slots + so_slots === 0,
+                optimal_lineup: so_slots === 0,
                 lineup_check: league_check
             }
         })
