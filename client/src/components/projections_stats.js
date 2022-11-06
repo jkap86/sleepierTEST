@@ -144,7 +144,7 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
             cur_rank: allplayers[cur_id]?.rank_ecr,
             subs: teams_already_played.includes(allplayers[cur_id]?.team) ? [] : subs.filter(x => !teams_already_played.includes(allplayers[x]?.team)),
             subs_taxi: includeTaxi > 0 ? subs_taxi.filter(x => !teams_already_played.includes(allplayers[x]?.team)) : [],
-            isInOptimal: optimal_lineup.includes(cur_id) || teams_already_played.includes(allplayers[cur_id]?.team),
+            isInOptimal: optimal_lineup.includes(cur_id) || teams_already_played.includes(allplayers[cur_id]?.team) || (subs.filter(x => !teams_already_played.includes(allplayers[x]?.team).length === 0)) ? true : false,
             optimal_lineup: optimal_lineup
         })
     })
