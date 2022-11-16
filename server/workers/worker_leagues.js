@@ -1,5 +1,3 @@
-const express = require('express')
-const router = express.Router()
 const axios = require('axios')
 const axiosRetry = require('axios-retry')
 
@@ -11,7 +9,7 @@ axiosRetry(axios, {
     retryDelay: () => 2000
 })
 
-const getLeagueInfo = async (leagues, user_id) => {
+const getLeagues = async (user_id) => {
     let leagues_detailed = []
     await Promise.all(leagues.filter(x => x.status === "in_season").map(async (league, index) => {
         const [rosters, users] = await Promise.all([
@@ -54,13 +52,6 @@ const getLeagueInfo = async (leagues, user_id) => {
     return leagues_detailed
 }
 
-router.get('/leagues', async (req, res) => {
-    const user_id = req.query.user_id
-    const leagues = await axios.get(`https://api.sleeper.app/v1/user/${user_id}/leagues/nfl/2022`)
-    const leagues_detailed = await getLeagueInfo(leagues.data, user_id)
-    res.send({
-        leagues: leagues_detailed
-    })
-})
-
-module.exports = router
+module.exports = {
+    getLeagues: getLeagues
+}

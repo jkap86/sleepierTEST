@@ -1,24 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
-import { getLineupCheck } from '../projections_stats';
 const Search = React.lazy(() => import('../search'));
 const LeaguesStandings = React.lazy(() => import('./leaguesStandings'));
-const LeaguesLineupCheck = React.lazy(() => import('./leaguesLineupCheck'));
 
-const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague, stateStats }) => {
+
+const Leagues = ({ prop_leagues, allplayers, user_id }) => {
     const [leagues, setLeagues] = useState([])
     const [searched, setSearched] = useState('')
     const [page, setPage] = useState(1)
     const [rostersVisible, setRostersVisible] = useState('')
-    const [lineupCheck, setLineupCheck] = useState('League Summary');
+    const [tab, setTab] = useState('League Summary');
     const rowRef = useRef(null)
     const sortedByRef = useRef({
         by: 'default',
         descending: true
     })
-    const [includeTaxi, setIncludeTaxi] = useState(1)
-    const [rankMargin, setRankMargin] = useState(0)
 
 
+    useEffect(() => {
+        setPage(1)
+    }, [searched, prop_leagues])
 
     const sortLeagues = (sort_by, prop_leagues, initial = false) => {
         let l = prop_leagues ? prop_leagues : leagues
@@ -107,58 +107,26 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague, stateStats }) 
     }, [page])
 
     useEffect(() => {
-        let pl = prop_leagues.map(l => {
-            const league_check = getLineupCheck(l.roster_positions, l.userRoster, allplayers, parseInt(includeTaxi), parseInt(rankMargin), stateStats)
-            const empty_slots = l.userRoster.starters?.filter(s => s === '0').length
-            const bye_slots = league_check.filter(slot => slot.cur_rank === 1000).map(slot => slot.cur_id).length
-            const so_slots = league_check.filter(slot => (slot.subs?.length > 0) || (slot.subs_taxi?.length > 0)).length
-            return {
-                ...l,
-                empty_slots: empty_slots + bye_slots,
-                so_slots: so_slots,
-                qb_in_sf: league_check
-                    .filter(slot => slot.slot === 'SUPER_FLEX' && allplayers[slot.cur_id]?.position !== 'QB').length < 1,
-                optimal_lineup: so_slots === 0,
-                lineup_check: league_check
-            }
-        })
+        let pl = prop_leagues
         sortLeagues(sortedByRef.current.by, pl, true)
-    }, [prop_leagues, includeTaxi, rankMargin, stateStats])
+    }, [prop_leagues])
 
     const leagues_display = searched.trim().length === 0 ? leagues :
         leagues.filter(x => x.name.trim() === searched.trim())
 
 
-    const display = lineupCheck === 'Lineup Check' ?
-        <LeaguesLineupCheck
-            sortLeagues={sortLeagues}
+    const display = (
+        <LeaguesStandings
             leagues_display={leagues_display}
             page={page}
             setPage={setPage}
             rowRef={rowRef}
             rostersVisible={rostersVisible}
             setRostersVisible={setRostersVisible}
-            allplayers={allplayers}
-            syncLeague={syncLeague}
             user_id={user_id}
-            options={{
-                includeTaxi: includeTaxi,
-                rankMargin: rankMargin
-            }}
+            allplayers={allplayers}
         />
-        : lineupCheck === 'League Summary' ?
-            <LeaguesStandings
-                sortLeagues={sortLeagues}
-                leagues_display={leagues_display}
-                page={page}
-                setPage={setPage}
-                rowRef={rowRef}
-                rostersVisible={rostersVisible}
-                setRostersVisible={setRostersVisible}
-                user_id={user_id}
-                allplayers={allplayers}
-            />
-            : null
+    )
 
     return <>
         <React.Suspense fallback={<>...</>}>
@@ -180,42 +148,13 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague, stateStats }) 
         <div className={`nav1`}>
             <div className={'nav1_button_wrapper'}>
                 <button
-                    className={lineupCheck === 'League Summary' ? 'active clickable' : 'clickable'}
-                    onClick={() => setLineupCheck('League Summary')}
+                    className={tab === 'League Summary' ? 'active clickable' : 'clickable'}
+                    onClick={() => setTab('League Summary')}
                 >
                     Summary
                 </button>
-                <button
-                    className={lineupCheck === 'Lineup Check' ? 'active clickable' : 'clickable'}
-                    onClick={() => setLineupCheck('Lineup Check')}
-                >
-                    Lineup Check
-                </button>
             </div>
-            <div className={'lineupcheck_options'} hidden={lineupCheck !== 'Lineup Check'}>
 
-                <label>
-                    Include Taxi
-                    <select
-                        value={includeTaxi}
-                        onChange={(e) => setIncludeTaxi(e.target.value)}
-                    >
-                        <option value={1}>True</option>
-                        <option value={-1}>False</option>
-                    </select>
-                </label>
-                <label>
-                    Rank Margin
-                    <select
-                        value={rankMargin}
-                        onChange={(e) => setRankMargin(e.target.value)}
-                    >
-                        {Array.from(Array(51).keys()).map(key =>
-                            <option key={key}>{key}</option>
-                        )}
-                    </select>
-                </label>
-            </div>
         </div>
         {display}
     </>

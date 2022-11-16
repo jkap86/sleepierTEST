@@ -3,17 +3,17 @@ import React, { useEffect, useState } from "react";
 import { avatar } from './misc_functions';
 import sleeperLogo from '../images/sleeper_icon.png';
 const Leagues = React.lazy(() => import('./Leagues/leagues'));
-const Players = React.lazy(() => import('./Players/players'));
-const Leaguemates = React.lazy(() => import('./Leaguemates/leaguemates'));
-const PlayersRankProj = React.lazy(() => import('./Players/playersRank_Proj'));
 
-const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeaguemates, statePlayerShares, syncLeague, sendRankEdit, stateStats }) => {
+const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeaguemates, statePlayerShares, syncLeague, sendRankEdit }) => {
     const [stateLeaguesFiltered, setStateLeaguesFiltered] = useState([]);
     const [stateLeaguematesFiltered, setStateLeaguematesFiltered] = useState([]);
     const [statePlayerSharesFiltered, setStatePlayerSharesFiltered] = useState([]);
-    const [tab, setTab] = useState('Leagues');
+    const [tab, setTab] = useState('Lineup Check');
     const [type1, setType1] = useState('All');
     const [type2, setType2] = useState('All');
+    const [includeTaxi, setIncludeTaxi] = useState(1)
+    const [rankMargin, setRankMargin] = useState(0)
+    const [includeLocked, setIncludeLocked] = useState(1)
 
     useEffect(() => {
         const fetchFiltered = () => {
@@ -250,54 +250,9 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
                         allplayers={stateAllPlayers}
                         user_id={state_user.user_id}
                         avatar={avatar}
-                        syncLeague={syncLeague}
-                        stateStats={stateStats}
                     />
                 </React.Suspense>
             break;
-        case 'Players':
-            display = isLoading ? loadingMessage :
-                <React.Suspense fallback={loadingMessage}>
-                    <Players
-                        player_shares={statePlayerSharesFiltered}
-                        allplayers={stateAllPlayers}
-                        user_id={state_user.user_id}
-                        sendRankEdit={sendRankEdit}
-                    />
-                </React.Suspense>
-            break;
-        case 'Leaguemates':
-            display = isLoading ? loadingMessage :
-                <React.Suspense fallback={
-                    <div className='logo_wrapper'>
-                        <div className='z one'>Z</div>
-                        <div className='z two'>Z</div>
-                        <div className='z three'>Z</div>
-                    </div>
-                }>
-                    <Leaguemates
-                        leaguemates={stateLeaguematesFiltered}
-                        user_id={state_user.user_id}
-                        username={state_user.display_name}
-                        avatar={avatar}
-                    />
-                </React.Suspense>
-            break;
-        case 'Rankings':
-            display = isLoading ? loadingMessage :
-                <React.Suspense fallback={
-                    <div className='logo_wrapper'>
-                        <div className='z one'>Z</div>
-                        <div className='z two'>Z</div>
-                        <div className='z three'>Z</div>
-                    </div>
-                }>
-                    <PlayersRankProj
-                        allplayers={stateAllPlayers}
-                        playershares={statePlayerShares.sort((a, b) => (stateAllPlayers[a.id]?.rank_ecr || 999) - (stateAllPlayers[b.id]?.rank_ecr || 999))}
-                        sendRankEdit={sendRankEdit}
-                    />
-                </React.Suspense >
         default:
             break;
     }
@@ -329,14 +284,19 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
                                 </h1>
                                 <div className="navbar">
                                     <button
-                                        className={tab === 'Leagues' ? 'active clickable' : 'clickable'}
-                                        onClick={() => setTab('Leagues')}>
-                                        Leagues
+                                        className={tab === 'Lineup Check' ? 'active clickable' : 'clickable'}
+                                        onClick={() => setTab('Lineup Check')}>
+                                        Lineups
                                     </button>
                                     <button
                                         className={tab === 'Players' ? 'active clickable' : 'clickable'}
                                         onClick={() => setTab('Players')}>
                                         Players
+                                    </button>
+                                    <button
+                                        className={tab === 'Leagues' ? 'active clickable' : 'clickable'}
+                                        onClick={() => setTab('Leagues')}>
+                                        Leagues
                                     </button>
                                     <button
                                         className={tab === 'Leaguemates' ? 'active clickable' : 'clickable'}

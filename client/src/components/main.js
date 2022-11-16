@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom";
 import React, { useEffect, useState, useRef } from "react";
 import axios from 'axios';
-import axiosRetry from "axios-retry"
-import { match_weekly_rankings, getNewRank } from './projections_stats';
+import axiosRetry from "axios-retry";
 import View from "./view";
+
 
 const Main = () => {
     const params = useParams();
@@ -13,7 +13,6 @@ const Main = () => {
     const [stateLeagues, setStateLeagues] = useState([]);
     const [stateLeaguemates, setStateLeaguemates] = useState([]);
     const [statePlayerShares, setStatePlayerShares] = useState([]);
-    const [stateStats, setStateStats] = useState([])
 
     axiosRetry(axios, {
         retries: 5,
@@ -97,7 +96,6 @@ const Main = () => {
         }).flat(2)
         const playersCount = getPlayerCount(players_all.filter(x => x !== undefined), user_id, leagues)
         setStatePlayerShares(playersCount)
-        setIsLoading(false);
     }
 
     const getLeaguemates = (leagues, user_id) => {
@@ -152,114 +150,46 @@ const Main = () => {
         setStateLeaguemates(lmCount);
     }
 
-
     useEffect(() => {
         const fetchData = async () => {
-            const allplayers = await axios.get('/allplayers')
-            const weekly_rankings = await axios.get('/weeklyrankings')
-            const matched_rankings = await match_weekly_rankings(weekly_rankings.data, allplayers.data)
-            setStateAllPlayers(matched_rankings)
-            const stats = await axios.get('/stats')
-            console.log(stats.data)
-            setStateStats(stats.data)
-        }
-        fetchData()
-    }, [])
-
-    useEffect(() => {
-        const dailySync = setInterval(() => {
-            const fetchSync = async () => {
-                const allplayers = await axios.get('/allplayers')
-                const weekly_rankings = await axios.get('/weeklyrankings')
-                const matched_rankings = await match_weekly_rankings(weekly_rankings.data, allplayers.data)
-                setStateAllPlayers(matched_rankings)
-                const stats = await axios.get('/stats')
-                setStateStats(stats.data)
-            }
-            fetchSync()
-        }, 1000 * 60 * 60 * 24)
-        return () => clearInterval(dailySync)
-
-    }, [])
-
-    useEffect(() => {
-        const syncWeeklyRankings = setInterval(() => {
-            const fetchSync = async () => {
-                const weekly_rankings = await axios.get('/weeklyrankings')
-                const matched_rankings = await match_weekly_rankings(weekly_rankings.data, stateAllPlayers)
-                setStateAllPlayers(matched_rankings)
-            }
-            fetchSync()
-        }, 1000 * 60 * 15)
-        return () => clearInterval(syncWeeklyRankings)
-    }, [stateAllPlayers])
-
-    useEffect(() => {
-        setIsLoading(true);
-        const fetchLeagues = async (user) => {
-            const leagues = await axios.get('/leagues', {
-                params: {
-                    user_id: user.user_id
-                }
-            })
-            setStateLeagues(leagues.data.leagues.sort((a, b) => a.index - b.index))
-
-            getPlayerShares(leagues.data.leagues.filter(x => x !== null), user.user_id)
-            getLeaguemates(leagues.data.leagues.filter(x => x !== null), user.user_id)
-        }
-        const fetchUser = async () => {
-            const user = await axios.get(`/user`, {
+            const user = await axios.get('/user', {
                 params: {
                     username: params.username
-                }
+                },
+                timeout: 3000
             })
 
             if (user.data?.user_id) {
                 setState_User(user.data)
-                fetchLeagues(user.data)
+                const allplayers = await axios.get('/allplayers')
+                setStateAllPlayers(allplayers.data)
+                const leagues = await axios.get('/leagues', {
+                    params: {
+                        user: user.data
+                    }
+                })
+                setStateLeagues(leagues.data)
+                getPlayerShares(leagues.data, user.data.user_id)
+                getLeaguemates(leagues.data, user.data.user_id)
             } else {
                 setState_User('Invalid')
             }
         }
-        fetchUser()
-
+        setIsLoading(true)
+        fetchData()
+        setIsLoading(false)
     }, [params.username])
 
-    const syncLeague = async (league_id, user_id) => {
-        const sync = await axios.get('/syncleague', {
-            params: {
-                league_id: league_id,
-                user_id: user_id
-            }
-        })
-        const leagues = stateLeagues
-        const leaguesSynced = leagues.map(league => {
-            if (league.league_id === sync.data.league_id) {
-                league = {
-                    ...sync.data,
-                    index: league.index
-                }
-            }
-            return league
-        })
-        setStateLeagues([...leaguesSynced])
-        getPlayerShares(leaguesSynced.filter(x => x !== null), state_user.user_id)
-        getLeaguemates(leaguesSynced.filter(x => x !== null), state_user.user_id)
-    }
 
-    return <>
-        <View
-            isLoading={isLoading}
-            stateAllPlayers={stateAllPlayers}
-            state_user={state_user}
-            stateLeagues={stateLeagues}
-            stateLeaguemates={stateLeaguemates}
-            statePlayerShares={statePlayerShares}
-            stateStats={stateStats}
-            syncLeague={syncLeague}
-            sendRankEdit={setStateAllPlayers}
-        />
-    </>
+    return !isLoading && state_user === 'Invalid' ? <h1>USERNAME NOT FOUND</h1> :
+        isLoading ? null :
+            <View
+                stateAllPlayers={stateAllPlayers}
+                state_user={state_user}
+                stateLeagues={stateLeagues}
+                stateLeaguemates={stateLeaguemates}
+                statePlayerShares={statePlayerShares}
+            />
 }
 
 export default Main;
