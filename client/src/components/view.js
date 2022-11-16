@@ -31,17 +31,17 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
             let filteredPlayerShares;
             switch (filter1) {
                 case ('Redraft'):
-                    filteredLeagues = leagues.filter(x => x.settings.type !== 2);
+                    filteredLeagues = leagues.filter(x => x.type !== 2);
                     filteredLeaguemates = leaguemates.map(lm => {
                         return {
                             ...lm,
-                            leagues: lm.leagues.filter(x => x.settings.type !== 2)
+                            leagues: lm.leagues.filter(x => x.type !== 2)
                         }
                     })
                     filteredPlayerShares = playershares.map(player => {
                         return {
                             ...player,
-                            leagues_owned: player.leagues_owned.filter(x => x.settings.type !== 2)
+                            leagues_owned: player.leagues_owned.filter(x => x.type !== 2)
                         }
                     })
                     break;
@@ -61,17 +61,17 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
                     })
                     break;
                 case ('Dynasty'):
-                    filteredLeagues = leagues.filter(x => x.settings.type === 2)
+                    filteredLeagues = leagues.filter(x => x.type === 2)
                     filteredLeaguemates = leaguemates.map(lm => {
                         return {
                             ...lm,
-                            leagues: lm.leagues.filter(x => x.settings.type === 2)
+                            leagues: lm.leagues.filter(x => x.type === 2)
                         }
                     })
                     filteredPlayerShares = playershares.map(player => {
                         return {
                             ...player,
-                            leagues_owned: player.leagues_owned.filter(x => x.settings.type === 2)
+                            leagues_owned: player.leagues_owned.filter(x => x.type === 2)
                         }
                     })
                     break;
@@ -96,17 +96,17 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
             let filteredPlayerShares2 = filteredPlayerShares
             switch (filter2) {
                 case ('Bestball'):
-                    filteredLeagues2 = filteredLeagues.filter(x => x.settings.best_ball === 1);
+                    filteredLeagues2 = filteredLeagues.filter(x => x.best_ball === 1);
                     filteredLeaguemates2 = filteredLeaguemates.map(lm => {
                         return {
                             ...lm,
-                            leagues: lm.leagues.filter(x => x.settings.best_ball === 1)
+                            leagues: lm.leagues.filter(x => x.best_ball === 1)
                         }
                     })
                     filteredPlayerShares2 = filteredPlayerShares.map(player => {
                         return {
                             ...player,
-                            leagues_owned: player.leagues_owned.filter(x => x.settings.best_ball === 1)
+                            leagues_owned: player.leagues_owned.filter(x => x.best_ball === 1)
                         }
                     })
                     break;
@@ -126,7 +126,7 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
                     })
                     break;
                 case ('Standard'):
-                    filteredLeagues2 = filteredLeagues.filter(x => x.settings.best_ball !== 1);
+                    filteredLeagues2 = filteredLeagues.filter(x => x.best_ball !== 1);
                     filteredLeaguemates2 = filteredLeaguemates.map(lm => {
                         return {
                             ...lm,
@@ -136,7 +136,7 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
                     filteredPlayerShares2 = filteredPlayerShares.map(player => {
                         return {
                             ...player,
-                            leagues_owned: player.leagues_owned.filter(x => x.settings.best_ball !== 1)
+                            leagues_owned: player.leagues_owned.filter(x => x.best_ball !== 1)
                         }
                     })
                     break;

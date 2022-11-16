@@ -43,7 +43,7 @@ const Main = () => {
                     })
                 }
             })
-
+            console.log(playerShares)
             return playerShares
 
         }
@@ -65,18 +65,16 @@ const Main = () => {
                         league_id: league.league_id,
                         league_name: league.name,
                         league_avatar: league.avatar,
-                        total_rosters: league.total_rosters,
                         rosters: league.rosters,
                         userRoster: league.userRoster,
                         users: league.users,
-                        settings: league.settings,
                         scoring_settings: league.scoring_settings,
                         rank: roster.rank,
                         rank_pts: roster.rank_points,
                         roster: roster,
                         roster_positions: league.roster_positions,
-                        dynasty: league.dynasty,
-                        bestball: league.bestball,
+                        type: league.type,
+                        best_ball: league.best_ball,
                         manager: (league.users.find(x =>
                             x.user_id === roster.owner_id
                         )) || (league.users.find(x =>

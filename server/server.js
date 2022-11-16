@@ -41,37 +41,24 @@ db.connect((err) => {
         const createTables = async () => {
             const state = await axios.get(`https://api.sleeper.app/v1/state/nfl`, options)
             app.set('state', state.data)
-            db.query(`CREATE TABLE IF NOT EXISTS users (
-                user_id VARCHAR(255) PRIMARY KEY,
-                username VARCHAR(255),
-                avatar VARCHAR(255),
-                leagues_${state.data.season} JSON,
-                updated VARCHAR(255)
-            )`, (err) => {
-                if (err) {
-                    console.log(err)
-                } else {
-                    console.log('Users Table Created!')
-                }
-            })
-            db.query(`CREATE TABLE IF NOT EXISTS leagues_${state.data.season} (
-                league_id VARCHAR(255) PRIMARY KEY,
-                name VARCHAR(255),
-                avatar VARCHAR(255),
-                best_ball INTEGER,
-                type INTEGER,
-                scoring_settings JSON,
-                roster_positions JSON,
-                users JSON,
-                rosters JSON,
-                updated VARCHAR(255)
-            )`, (err) => {
-                if (err) {
-                    console.log(err)
-                } else {
-                    console.log('Leagues Table Created!')
-                }
-            })
+            db.query(
+                `CREATE TABLE IF NOT EXISTS users (user_id VARCHAR(255) PRIMARY KEY, username VARCHAR(255), avatar VARCHAR(255), leagues_${state.data.season} JSON, updated VARCHAR(255))`,
+                (err) => {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        console.log('Users Table Created!')
+                    }
+                })
+            db.query(
+                `CREATE TABLE IF NOT EXISTS leagues_${state.data.season} (league_id VARCHAR(255) PRIMARY KEY, name VARCHAR(255), avatar VARCHAR(255), best_ball INTEGER, type INTEGER, scoring_settings JSON, roster_positions JSON, users JSON, rosters JSON, updated VARCHAR(255))`,
+                (err) => {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        console.log('Leagues Table Created!')
+                    }
+                })
         }
         createTables()
     }
