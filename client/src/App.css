@@ -97,24 +97,7 @@ input.editRank {
 
 i {
   position: relative;
-}
-
-i.fa-lock,
-i.fa-lock-open {
-  font-size: 4rem;
-  height: 4rem;
-  color: goldenrod;
-  position: absolute;
-}
-
-i.fa-ban,
-i.fa-ban::before {
-  font-size: 5rem;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: red;
+  font-size: 2vh;
 }
 
 i.green {
@@ -135,6 +118,16 @@ i.left {
 
 i.right {
   float: right;
+}
+
+i.fa-ban,
+i.fa-ban::before {
+  font-size: 5rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: red;
 }
 
 /* Hompage */
@@ -470,15 +463,15 @@ div.rb {
 
 .hidden {
   position: absolute;
-  left: 0;
-  right: 0;
   top: 0;
   bottom: 0;
+  right: 0;
+  width: 100%;
   background-color: transparent;
   border: none;
   color: transparent;
   opacity: 0;
-  width: 100%;
+  margin: 0;
 }
 
 div.page_numbers_wrapper {
@@ -491,7 +484,13 @@ div.page_numbers_wrapper {
   margin: auto;
 }
 
-ol.page_numbers {
+ol.page_numbers2 {
+  position: absolute;
+  left: 0;
+}
+
+ol.page_numbers,
+ol.page_numbers2 {
   list-style: none;
   display: flex;
   margin: auto;
@@ -507,13 +506,15 @@ ol.page_numbers {
   filter: drop-shadow(0 0 1rem var(--color2));
 }
 
-ol.page_numbers>li {
+ol.page_numbers>li,
+ol.page_numbers2>li {
   margin: 0.5rem;
   padding: 0.5rem;
   border: 0.5rem ridge var(--color6);
 }
 
-ol.page_numbers>li.active {
+ol.page_numbers>li.active,
+ol.page_numbers2>li.active {
   color: var(--color2);
   border: 0.5rem ridge var(--color2);
 }
@@ -536,9 +537,21 @@ img.thumbnail.small {
   height: 2.5rem;
 }
 
+img.taxi {
+  box-shadow: none;
+  margin: .5rem;
+  width: 4rem;
+  height: 4rem;
+
+}
+
 th.small {
   font-size: 75%;
   overflow-x: scroll;
+}
+
+td.transparent {
+  background-color: transparent !important;
 }
 
 td.left,
@@ -578,7 +591,6 @@ th.left:hover p {
 p.small {
   font-size: 75%;
   display: inline;
-  padding-left: 1rem;
 }
 
 p.red {
@@ -586,6 +598,10 @@ p.red {
   filter: brightness(2);
   margin: 0;
   font-weight: 900;
+}
+
+p.red.small {
+  font-weight: initial;
 }
 
 p.green {
@@ -687,6 +703,12 @@ div.nav1 {
   margin: auto;
 }
 
+
+div.nav1>div.nav1_button_wrapper {
+  display: flex;
+  justify-content: center;
+}
+
 div.nav1>div.lineupcheck_options {
   position: absolute;
   float: right;
@@ -705,12 +727,19 @@ div.lineupcheck_option {
 }
 
 div.nav1>div.lineupcheck_options>label {
+  display: inline-flex;
+  flex-direction: column;
   font-size: 1.5rem;
   margin: auto 2rem;
-  vertical-align: middle;
-  word-wrap: break-word;
-  position: relative;
-  width: 50%;
+}
+
+div.nav1>div.lineupcheck_options>label>select {
+  width: 75%;
+  margin: .5rem auto;
+  background-color: var(--color2);
+  font-weight: 900;
+  text-align: center;
+  font-size: inherit;
 }
 
 table.main div.nav2 {
@@ -722,6 +751,7 @@ table.main div.nav2 {
   height: 5rem;
   text-align: left;
   display: flex;
+  justify-content: space-evenly;
 }
 
 table.main div.nav2 ol.page_numbers {
@@ -765,9 +795,36 @@ table.table1 {
   border-spacing: 0.25rem 0;
 }
 
-table.table2.lineup td.sub {
-  border: 0.25rem solid red;
+td.red {
+  border: 0.5rem solid red;
   color: red;
+}
+
+p.MNF {
+  color: var(--te);
+}
+
+p.TNF {
+  color: var(--wr);
+}
+
+p.non_qb {
+  color: fuchsia;
+}
+
+td.later {
+  border: 0.5rem solid var(--te);
+  color: var(--te);
+}
+
+td.earlier {
+  border: 0.5rem solid var(--wr);
+  color: var(--wr)
+}
+
+td.non_qb_sf {
+  border: .5rem solid fuchsia;
+  color: fuchsia;
 }
 
 table.table2.lineup,
@@ -775,6 +832,25 @@ table.table2.subs {
   width: 50%;
   display: inline-table;
   vertical-align: top;
+  font-size: 1.5rem;
+}
+
+table.table2.subs {
+  border-collapse: collapse;
+}
+
+table.table2.subs tbody.lineup_option {
+  border: 1rem solid var(--color2);
+}
+
+table.main td.transparent {
+  height: 2.5rem;
+  background-color: transparent;
+  font-weight: 900;
+}
+
+table.table2.subs tr.swap>td {
+  background-color: indigo;
 }
 
 table.table2.league,
@@ -860,7 +936,7 @@ table.table3.roster td.left:hover p {
 
 table.table2.roster {
   position: sticky;
-  top: 15.5rem;
+  top: 25.5rem;
   z-index: 6;
 }
 
@@ -871,7 +947,7 @@ table.table2 {
   border-spacing: 0.25rem 0;
   vertical-align: top;
   position: sticky;
-  top: 20.25rem;
+  top: 25.25rem;
   z-index: 6;
 }
 
@@ -884,6 +960,10 @@ table.table2 thead {
 
 table.table2 tr {
   filter: drop-shadow(0 0 2rem black);
+}
+
+table.table2 tr.MNF {
+  color: 1rem solid red !important;
 }
 
 table.table2 tr.row2.active {

@@ -101,15 +101,16 @@ const hour = date.getHours()
 const minute = date.getMinutes()
 const delay = ((26 - hour) * 60 * 60) + ((60 - minute) * 60)
 setTimeout(() => {
-    const interval = setInterval(() => {
-        const date = new Date()
-        const hour = date.getHours()
-        const minute = date.getMinutes()
-        const second = date.getSeconds()
+    const date = new Date()
+    const hour = date.getHours()
+    const minute = date.getMinutes()
+    const second = date.getSeconds()
+    console.log(`All Players updated at ${hour}:${minute}:${second}`)
+    dailySync()
+    setInterval(() => {
         dailySync()
         console.log(`All Players updated at ${hour}:${minute}:${second}`)
     }, 1000 * 60 * 60 * 24)
-    return () => clearInterval(interval)
 }, delay)
 
 setInterval(async () => {
@@ -150,22 +151,9 @@ app.get('/leagues', async (req, res, next) => {
 }, async (req, res) => {
     const state = app.get('state')
     const leagues = req.leagues
-    const leagues_from_db = await updateLeagues(axios, query, leagues, state.season)
-    const leagues_send = []
-    leagues_from_db.map(league => {
-        const userRoster = league.rosters.find(r => r.owner_id === req.user.user_id || r.co_owners?.includes(req.user.user_id))
-        if (userRoster?.players?.length > 0) {
-            leagues_send.push({
-                ...league,
-                index: leagues.findIndex(obj => {
-                    return obj.league_id === league.league_id
-                }),
-                userRoster: userRoster,
-                is_co: userRoster.co_owners?.includes(req.user.user_id) ? true : false
-            })
-        }
-    })
-    res.send(leagues_send.sort((a, b) => a.index - b.index))
+    const leagues_from_db = await updateLeagues(axios, query, leagues, state.season, req.user.user_id)
+
+    res.send(leagues_from_db.sort((a, b) => a.index - b.index))
 })
 
 app.get('*', async (req, res) => {

@@ -2,7 +2,11 @@ import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { avatar } from './misc_functions';
 import sleeperLogo from '../images/sleeper_icon.png';
+const LeaguesLineupCheck = React.lazy(() => import('./Leagues/leaguesLineupCheck'));
 const Leagues = React.lazy(() => import('./Leagues/leagues'));
+const Players = React.lazy(() => import('./Players/players'));
+const Leaguemates = React.lazy(() => import('./Leaguemates/leaguemates'));
+const PlayersRankProj = React.lazy(() => import('./Players/playersRank_Proj'));
 
 const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeaguemates, statePlayerShares, syncLeague, sendRankEdit }) => {
     const [stateLeaguesFiltered, setStateLeaguesFiltered] = useState([]);
@@ -242,6 +246,22 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
 
     let display;
     switch (tab) {
+        case 'Lineup Check':
+            display = isLoading ? loadingMessage :
+                <React.Suspense fallback={loadingMessage}>
+                    <LeaguesLineupCheck
+                        prop_leagues={stateLeaguesFiltered}
+                        allplayers={stateAllPlayers}
+                        user_id={state_user.user_id}
+                        includeTaxi={includeTaxi}
+                        includeLocked={includeLocked}
+                        setIncludeLocked={setIncludeLocked}
+                        setIncludeTaxi={setIncludeTaxi}
+                        rankMargin={rankMargin}
+                        setRankMargin={setRankMargin}
+                    />
+                </React.Suspense>
+            break;
         case 'Leagues':
             display = isLoading ? loadingMessage :
                 <React.Suspense fallback={loadingMessage}>
@@ -253,6 +273,46 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
                     />
                 </React.Suspense>
             break;
+        case 'Players':
+            display = isLoading ? loadingMessage :
+                <React.Suspense fallback={loadingMessage}>
+                    <Players
+                        player_shares={statePlayerSharesFiltered}
+                        allplayers={stateAllPlayers}
+                        user_id={state_user.user_id}
+                    />
+                </React.Suspense>
+            break;
+        case 'Leaguemates':
+            display = isLoading ? loadingMessage :
+                <React.Suspense fallback={
+                    <div className='logo_wrapper'>
+                        <div className='z one'>Z</div>
+                        <div className='z two'>Z</div>
+                        <div className='z three'>Z</div>
+                    </div>
+                }>
+                    <Leaguemates
+                        leaguemates={stateLeaguematesFiltered}
+                        user_id={state_user.user_id}
+                        username={state_user.display_name}
+                    />
+                </React.Suspense>
+            break;
+        case 'Rankings':
+            display = isLoading ? loadingMessage :
+                <React.Suspense fallback={
+                    <div className='logo_wrapper'>
+                        <div className='z one'>Z</div>
+                        <div className='z two'>Z</div>
+                        <div className='z three'>Z</div>
+                    </div>
+                }>
+                    <PlayersRankProj
+                        allplayers={stateAllPlayers}
+                        playershares={statePlayerShares.sort((a, b) => (stateAllPlayers[a.id]?.rank_ecr || 999) - (stateAllPlayers[b.id]?.rank_ecr || 999))}
+                    />
+                </React.Suspense >
         default:
             break;
     }

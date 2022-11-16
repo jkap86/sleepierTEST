@@ -9,7 +9,7 @@ const updateUser = async (query, user, leagues, season) => {
     return 'Successful'
 }
 
-const updateLeagues = async (axios, query, leagues, season) => {
+const updateLeagues = async (axios, query, leagues, season, user_id) => {
     const now = Date.now().toString()
     let to_updated_league_ids = leagues.map(league => league.league_id)
     let current_leagues = await query(`SELECT * FROM leagues_${season}`)
@@ -18,6 +18,9 @@ const updateLeagues = async (axios, query, leagues, season) => {
     current_leagues = current_leagues.map(cl => {
         return {
             ...cl,
+            index: leagues.findIndex(obj => {
+                return obj.league_id === cl.league_id
+            }),
             scoring_settings: JSON.parse(cl.scoring_settings),
             roster_positions: JSON.parse(cl.roster_positions),
             rosters: JSON.parse(cl.rosters),
@@ -31,7 +34,11 @@ const updateLeagues = async (axios, query, leagues, season) => {
             await axios.get(`https://api.sleeper.app/v1/league/${league.league_id}/users`),
             await axios.get(`https://api.sleeper.app/v1/league/${league.league_id}/rosters`)
         ])
+
         current_leagues.push({
+            index: leagues.findIndex(obj => {
+                return obj.league_id === league.league_id
+            }),
             league_id: league.league_id,
             name: league.name,
             avatar: league.avatar,
@@ -48,9 +55,36 @@ const updateLeagues = async (axios, query, leagues, season) => {
             [league.league_id, league.name, league.avatar, league.settings.best_ball, league.settings.type, JSON.stringify(league.scoring_settings), JSON.stringify(league.roster_positions), JSON.stringify(users.data), JSON.stringify(rosters.data), now]
         );
         console.log('leagues updated')
+
     }))
 
-    return current_leagues
+    return (
+        current_leagues
+            .map(league => {
+                league.rosters
+                    ?.sort((a, b) => b.settings.fpts - a.settings.fpts)
+                    ?.map((roster, index) => {
+                        roster['rank_points'] = index + 1
+                        return roster
+                    })
+
+                const standings = (
+                    league.rosters
+                        ?.sort((a, b) => b.settings.wins - a.settings.wins || a.settings.losses - b.settings.losses ||
+                            b.settings.fpts - a.settings.fpts)
+                        ?.map((roster, index) => {
+                            roster['rank'] = index + 1
+                            return roster
+                        })
+                )
+                const userRoster = standings?.find(r => r.owner_id === user_id || r.co_owners?.includes(user_id))
+                return {
+                    ...league,
+                    userRoster: userRoster
+                }
+            })
+            .filter(league => league.userRoster)
+    )
 }
 
 module.exports = {

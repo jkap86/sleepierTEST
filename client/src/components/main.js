@@ -152,6 +152,7 @@ const Main = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            setIsLoading(true)
             const user = await axios.get('/user', {
                 params: {
                     username: params.username
@@ -174,15 +175,16 @@ const Main = () => {
             } else {
                 setState_User('Invalid')
             }
+            setIsLoading(false)
         }
-        setIsLoading(true)
+
         fetchData()
-        setIsLoading(false)
+
     }, [params.username])
 
 
     return !isLoading && state_user === 'Invalid' ? <h1>USERNAME NOT FOUND</h1> :
-        isLoading ? null :
+        isLoading ? <h1>Loading...</h1> :
             <View
                 stateAllPlayers={stateAllPlayers}
                 state_user={state_user}

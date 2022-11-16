@@ -102,8 +102,8 @@ const LeaguesStandings = ({ sortLeagues, leagues_display, page, setPage, rowRef,
                                                 <td>
                                                     <p
                                                         className={
-                                                            (league.userRoster.rank / league.total_rosters) <= .25 ? 'green' :
-                                                                (league.userRoster.rank / league.total_rosters) >= .75 ? 'red' :
+                                                            (league.userRoster.rank / league.rosters?.length) <= .25 ? 'green' :
+                                                                (league.userRoster.rank / league.rosters?.length) >= .75 ? 'red' :
                                                                     null
                                                         }
                                                     >
@@ -115,8 +115,8 @@ const LeaguesStandings = ({ sortLeagues, leagues_display, page, setPage, rowRef,
                                                 <td>
                                                     <p
                                                         className={
-                                                            (league.userRoster.rank_points / league.total_rosters) <= .25 ? 'green' :
-                                                                (league.userRoster.rank_points / league.total_rosters) >= .75 ? 'red' :
+                                                            (league.userRoster.rank_points / league.rosters?.length) <= .25 ? 'green' :
+                                                                (league.userRoster.rank_points / league.rosters?.length) >= .75 ? 'red' :
                                                                     null
                                                         }
                                                     >
