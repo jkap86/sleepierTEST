@@ -91,7 +91,7 @@ export const getNewRank = (rankings, prevRank, newRank, player_id, playerToIncre
 
 export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi, rankMargin, includeLocked) => {
     const week = Math.max(...Object.keys(allplayers).map(player_id => parseInt(allplayers[player_id]?.week)))
-    console.log(week)
+
     const position_map = {
         'QB': ['QB'],
         'RB': ['RB', 'FB'],
@@ -147,7 +147,7 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
     starting_slots.map((slot, index) => {
         const slot_options = player_ranks_filtered
             .filter(p => position_map[slot].includes(allplayers[p.id]?.position))
-            .sort((a, b) => a.rank - b.rank || a.gametime_day - b.gametime_day || a.gametime_hour - b.gametime_hour)
+            .sort((a, b) => a.rank - b.rank || roster.starters.includes(a.id) - roster.starters.includes(b.id) || a.gametime_day - b.gametime_day || a.gametime_hour - b.gametime_hour)
 
         const optimal_player = slot_options[0]?.rank < 999 ? slot_options[0]?.id :
             roster.starters[index]
