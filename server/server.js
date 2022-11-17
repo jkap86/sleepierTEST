@@ -10,9 +10,9 @@ const NodeCache = require('node-cache');
 const { Pool } = require('pg');
 
 
-const connectionString = process.env.DATABASE_URL + '?sslmode=require'
+const connectionString = process.env.DATABASE_URL
 const db = new Pool({
-    connectionString: connectionString,
+    connectionString: connectionString, ssl: { rejectUnauthorized: false }
 })
 
 const options = {
