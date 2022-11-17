@@ -154,8 +154,7 @@ const Main = () => {
             const user = await axios.get('/user', {
                 params: {
                     username: params.username
-                },
-                timeout: 3000
+                }
             })
             if (user.data?.user_id) {
                 setState_User(user.data)
