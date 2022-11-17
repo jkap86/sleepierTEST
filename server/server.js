@@ -87,12 +87,6 @@ setInterval(async () => {
 }, 1000 * 60 * 15)
 
 
-app.get('/update', async (req, res) => {
-    const state = app.get('state')
-    const update = await updateAllLeagues(axios, db, state.season)
-    res.send(update)
-})
-
 app.get('/allplayers', (req, res) => {
     const allplayers = app.get('allplayers')
     res.send(allplayers)
