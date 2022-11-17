@@ -105,7 +105,7 @@ const getLeagues = async (axios, db, leagues, season, user_id) => {
 }
 
 const syncLeague = async (db, league, season) => {
-    const now = Date.now().toString()
+    const now = new Date()
     const result = await db.query(
         `INSERT INTO leagues_${season} (
             league_id,

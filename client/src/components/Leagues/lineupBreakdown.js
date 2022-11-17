@@ -1,6 +1,5 @@
 
 const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activeSlot, setActiveSlot, includeTaxi }) => {
-    console.log(activeSlot?.swaps?.out)
 
     const display = lineup_check.map((slot, index) =>
         <tbody key={`${slot.cur_id}_${index}`}>
