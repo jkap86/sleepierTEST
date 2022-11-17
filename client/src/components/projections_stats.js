@@ -90,7 +90,8 @@ export const getNewRank = (rankings, prevRank, newRank, player_id, playerToIncre
 }
 
 export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi, rankMargin, includeLocked) => {
-
+    const week = Math.max(...Object.keys(allplayers).map(player_id => parseInt(allplayers[player_id]?.week)))
+    console.log(week)
     const position_map = {
         'QB': ['QB'],
         'RB': ['RB', 'FB'],
@@ -126,7 +127,7 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
         } else {
             rank = allplayers[player]?.rank_ecr
         }
-        if (includeLocked < 0 && allplayers[player]?.gametime < now) {
+        if (includeLocked < 0 && allplayers[player]?.gametime < now && allplayers[player]?.week === week) {
             if (roster.starters.includes(player)) {
                 rank = 0
             } else {

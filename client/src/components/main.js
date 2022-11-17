@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from 'axios';
 import axiosRetry from "axios-retry";
 import View from "./view";
-
+import sleeperLogo from '../images/sleeper_icon.png';
 
 const Main = () => {
     const params = useParams();
@@ -43,9 +43,7 @@ const Main = () => {
                     })
                 }
             })
-            console.log(playerShares)
             return playerShares
-
         }
 
         let players_all = leagues.map(league => {
@@ -178,15 +176,46 @@ const Main = () => {
 
     }, [params.username])
 
+    const syncLeague = async (league_id, user_id) => {
+        const sync = await axios.get('/syncleague', {
+            params: {
+                league_id: league_id,
+                user_id: user_id
+            }
+        })
+        const leagues = stateLeagues
+        const leaguesSynced = leagues.map(league => {
+            if (league.league_id === sync.data.league_id) {
+                league = {
+                    ...sync.data,
+                    index: league.index
+                }
+            }
+            return league
+        })
+        setStateLeagues([...leaguesSynced])
+        getPlayerShares(leaguesSynced.filter(x => x !== null), state_user.user_id)
+        getLeaguemates(leaguesSynced.filter(x => x !== null), state_user.user_id)
+    }
+
 
     return !isLoading && state_user === 'Invalid' ? <h1>USERNAME NOT FOUND</h1> :
-        isLoading ? <h1>Loading...</h1> :
+        isLoading ?
+            <div className='logo_wrapper'>
+                <img src={sleeperLogo} alt={'logo'} />
+                <div className='z one'>Z</div>
+                <div className='z two'>Z</div>
+                <div className='z three'>Z</div>
+            </div>
+            :
             <View
                 stateAllPlayers={stateAllPlayers}
                 state_user={state_user}
                 stateLeagues={stateLeagues}
                 stateLeaguemates={stateLeaguemates}
                 statePlayerShares={statePlayerShares}
+                syncLeague={syncLeague}
+                sendRankEdit={setStateAllPlayers}
             />
 }
 

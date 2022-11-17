@@ -259,6 +259,7 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
                         setIncludeTaxi={setIncludeTaxi}
                         rankMargin={rankMargin}
                         setRankMargin={setRankMargin}
+                        syncLeague={syncLeague}
                     />
                 </React.Suspense>
             break;
@@ -280,6 +281,7 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
                         player_shares={statePlayerSharesFiltered}
                         allplayers={stateAllPlayers}
                         user_id={state_user.user_id}
+                        sendRankEdit={sendRankEdit}
                     />
                 </React.Suspense>
             break;
@@ -311,6 +313,7 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
                     <PlayersRankProj
                         allplayers={stateAllPlayers}
                         playershares={statePlayerShares.sort((a, b) => (stateAllPlayers[a.id]?.rank_ecr || 999) - (stateAllPlayers[b.id]?.rank_ecr || 999))}
+                        sendRankEdit={sendRankEdit}
                     />
                 </React.Suspense >
         default:

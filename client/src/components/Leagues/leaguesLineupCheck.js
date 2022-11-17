@@ -299,8 +299,8 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
                         value={rankMargin}
                         onChange={(e) => setRankMargin(e.target.value)}
                     >
-                        {Array.from(Array(51).keys()).map(key =>
-                            <option key={key}>{key}</option>
+                        {Array.from(Array(50).keys()).map(key =>
+                            <option key={key + 1}>{key + 1}</option>
                         )}
                     </select>
                 </label>

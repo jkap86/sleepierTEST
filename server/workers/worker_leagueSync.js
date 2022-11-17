@@ -1,9 +1,6 @@
-const express = require('express')
-const router = express.Router()
-const axios = require('axios')
-const axiosRetry = require('axios-retry')
 
-const syncLeague = async (league_id, user_id) => {
+
+const getLeagueSync = async (axios, league_id, user_id) => {
     const [league, rosters, users] = await Promise.all([
         await axios.get(`https://api.sleeper.app/v1/league/${league_id}`),
         await axios.get(`https://api.sleeper.app/v1/league/${league_id}/rosters`),
@@ -40,11 +37,6 @@ const syncLeague = async (league_id, user_id) => {
 
 }
 
-router.get('/syncleague', async (req, res) => {
-    const league_id = req.query.league_id
-    const user_id = req.query.user_id
-    const league = await syncLeague(league_id, user_id)
-    res.send(league)
-})
-
-module.exports = router
+module.exports = {
+    getLeagueSync: getLeagueSync
+}
