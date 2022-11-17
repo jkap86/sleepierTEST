@@ -9,7 +9,10 @@ const { getWeeklyRankings, match_weekly_rankings } = require('./syncFunctions');
 const NodeCache = require('node-cache');
 const { Pool } = require('pg');
 
-const db = new Pool()
+
+const connectionString = process.env.DATABASE_URL
+console.log(connectionString)
+const db = new Pool({ connectionString })
 
 const options = {
     headers: {
