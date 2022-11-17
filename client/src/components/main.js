@@ -157,7 +157,6 @@ const Main = () => {
                 },
                 timeout: 3000
             })
-
             if (user.data?.user_id) {
                 setState_User(user.data)
                 const allplayers = await axios.get('/allplayers')

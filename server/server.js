@@ -7,15 +7,9 @@ const axios = require('axios')
 const { updateUser, updateLeagues } = require('./queries');
 const { getWeeklyRankings, match_weekly_rankings } = require('./syncFunctions');
 const NodeCache = require('node-cache');
-const mysql = require('mysql');
-const util = require('util');
+const { Pool } = require('pg');
 
-const myCache = new NodeCache
-
-app.use(compression())
-app.use(cors());
-app.use(express.json());
-app.use(express.static(path.resolve(__dirname, '../client/build')));
+const db = new Pool()
 
 const options = {
     headers: {
@@ -24,51 +18,10 @@ const options = {
     timeout: 5000
 }
 
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'password123',
-    database: 'sleepier',
-    charset: 'utf8mb4'
-});
-
-const query = util.promisify(db.query).bind(db)
-
-db.connect((err) => {
-    if (err) {
-        console.log(err)
-    } else {
-        const createTables = async () => {
-            const state = await axios.get(`https://api.sleeper.app/v1/state/nfl`, options)
-            app.set('state', state.data)
-            db.query(
-                `CREATE TABLE IF NOT EXISTS users (user_id VARCHAR(255) PRIMARY KEY, username VARCHAR(255), avatar VARCHAR(255), leagues_${state.data.season} JSON, updated VARCHAR(255))`,
-                (err) => {
-                    if (err) {
-                        console.log(err)
-                    } else {
-                        console.log('Users Table Created!')
-                    }
-                })
-            db.query(
-                `CREATE TABLE IF NOT EXISTS leagues_${state.data.season} (league_id VARCHAR(255) PRIMARY KEY, name VARCHAR(255), avatar VARCHAR(255), best_ball INTEGER, type INTEGER, scoring_settings JSON, roster_positions JSON, users JSON, rosters JSON, updated VARCHAR(255))`,
-                (err) => {
-                    if (err) {
-                        console.log(err)
-                    } else {
-                        console.log('Leagues Table Created!')
-                    }
-                })
-        }
-        createTables()
-    }
-});
-
-
-
 const dailySync = async () => {
     const state = await axios.get('https://api.sleeper.app/v1/state/nfl', options)
     app.set('state', state.data)
+
     const schedule = await axios.get(`https://api.sportsdata.io/v3/nfl/scores/json/Schedules/%7B2022%7D?key=d5d541b8c8b14262b069837ff8110635`, options)
     const allplayers = await axios.get('https://api.sleeper.app/v1/players/nfl', options)
     const weekly_rankings = await getWeeklyRankings(axios)
@@ -82,6 +35,33 @@ const dailySync = async () => {
 }
 dailySync()
 
+const season = '2022'
+
+db.query(
+    `CREATE TABLE IF NOT EXISTS users (user_id VARCHAR(255) PRIMARY KEY, username VARCHAR(255), avatar VARCHAR(255), leagues_${season} JSONB, updated VARCHAR(255))`,
+    (err) => {
+        if (err) {
+            console.log(err)
+        } else {
+            console.log('POSTGRES Users Table Created!')
+        }
+    })
+db.query(
+    `CREATE TABLE IF NOT EXISTS leagues_${season} (league_id VARCHAR(255) PRIMARY KEY, name VARCHAR(255), avatar VARCHAR(255), best_ball INTEGER, type INTEGER, scoring_settings JSONB, roster_positions JSONB, users JSONB, rosters JSONB, updated VARCHAR(255))`,
+    (err) => {
+        if (err) {
+            console.log(err)
+        } else {
+            console.log('POSTGRES Leagues Table Created!')
+        }
+    })
+
+const myCache = new NodeCache
+
+app.use(compression())
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 const date = new Date()
 const hour = date.getHours()
@@ -133,14 +113,13 @@ app.get('/leagues', async (req, res, next) => {
     req.user = user
     const leagues = await axios.get(`https://api.sleeper.app/v1/user/${user.user_id}/leagues/nfl/${state.season}`, options)
     req.leagues = leagues.data
-    await updateUser(query, user, leagues.data, state.season)
+    await updateUser(db, user, leagues.data, state.season)
     next()
 }, async (req, res) => {
     const state = app.get('state')
-    const leagues = req.leagues
-    const leagues_from_db = await updateLeagues(axios, query, leagues, state.season, req.user.user_id)
+    const current_leagues = await updateLeagues(axios, db, req.leagues, state.season, req.user.user_id)
 
-    res.send(leagues_from_db.sort((a, b) => a.index - b.index))
+    res.send(current_leagues)
 })
 
 app.get('*', async (req, res) => {
